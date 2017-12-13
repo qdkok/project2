@@ -2,14 +2,17 @@ package kr.co.sist.pcbmaster.frm;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import kr.co.sist.pcbmaster.evt.PcbMasterMainEvt;
 import kr.co.sist.pcbmaster.evt.PcbMasterServer;
 
-public class PcbStatusFrm {
+public class PcbStatusFrm extends JFrame {
+	
 	private PcbMasterMainEvt pmme;
 	private PcbMasterMainFrm pmmf;
+	
 	private JButton addTime,sendMsg,useEnd;
 	private JLabel lblSeatNum,lblId,lblName,lblTime;
 	private DefaultComboBoxModel dcbm;
@@ -18,7 +21,22 @@ public class PcbStatusFrm {
 		super();
 		this.pmme = pmme;
 		this.pmmf = pmmf;
+		
+		lblSeatNum = new JLabel("좌석");
+		lblId = new JLabel("ID");
+		lblName = new JLabel("사용자");
+		lblTime = new JLabel("남은시간");
+		
+		addTime =  new JButton("시간추가");
+		sendMsg = new JButton("메시지 보내기");
+		useEnd = new JButton("사용종료");
+		
+		
+		setBounds(300,80,1310,750);
+	    setVisible(true);
+	      
 	}//PcbStatusFrm
+
 
 	public PcbMasterMainEvt getPmme() {
 		return pmme;
@@ -100,5 +118,10 @@ public class PcbStatusFrm {
 		this.dcbm = dcbm;
 	}
 	
+	public static void main(String[] args) {
+		
+	}
 	
 }//class
+
+

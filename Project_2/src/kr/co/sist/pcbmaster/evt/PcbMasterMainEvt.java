@@ -8,6 +8,7 @@ import java.util.List;
 
 import kr.co.sist.pcbmaster.frm.PcbMasterMainFrm;
 import kr.co.sist.pcbmaster.vo.SetOrdListVO;
+import kr.co.sist.pcbmaster.frm.PcbStatusFrm;
 
 public class PcbMasterMainEvt extends MouseAdapter implements Runnable,ActionListener{
 	private PcbMasterMainFrm pmmf;
@@ -19,8 +20,10 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable,ActionLis
 	}//PcbMasterMainEvt
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		
+	public void actionPerformed(ActionEvent ae) {
+		if(ae.getSource()==pmmf.getBtnSeats()) {
+			new PcbStatusFrm(null, pmmf, null, pms);
+		}//end if
 	}//actionPerformed
 
 	@Override

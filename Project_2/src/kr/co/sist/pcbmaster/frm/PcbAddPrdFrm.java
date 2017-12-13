@@ -3,11 +3,12 @@ package kr.co.sist.pcbmaster.frm;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import kr.co.sist.pcbmaster.evt.PcbMasterMainEvt;
 
-public class PcbAddPrdFrm {
+public class PcbAddPrdFrm extends JFrame{
 	private PcbMasterMainEvt pmme;
 	private PcbSearchFrm pmmf;
 	private ImageIcon img;
@@ -16,10 +17,11 @@ public class PcbAddPrdFrm {
 	private DefaultComboBoxModel prdcate;
 	private boolean flag;
 	
-	public PcbAddPrdFrm(PcbMasterMainEvt pmme, PcbSearchFrm pmmf,boolean flag) {
-		super();
+	public PcbAddPrdFrm(PcbMasterMainEvt pmme, PcbSearchFrm pmmf, boolean flag) {
+		super("상품추가");
 		this.pmme = pmme;
 		this.pmmf = pmmf;
+		
 	}//PcbPrdFrm
 	
 	public void viewImg() {
