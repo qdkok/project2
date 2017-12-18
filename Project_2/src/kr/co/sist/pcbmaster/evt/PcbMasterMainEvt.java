@@ -4,17 +4,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.util.List;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import jdk.nashorn.internal.scripts.JO;
+import kr.co.sist.pcbmaster.dao.PcbDAO;
 import kr.co.sist.pcbmaster.frm.PcbAddPrdFrm;
 import kr.co.sist.pcbmaster.frm.PcbMasterMainFrm;
 import kr.co.sist.pcbmaster.vo.SetOrdListVO;
+import kr.co.sist.pcbmaster.vo.SetPrdListVO;
 import kr.co.sist.pcbmaster.frm.PcbStatusFrm;
 
 public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionListener {
@@ -24,6 +29,7 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 	public PcbMasterMainEvt(PcbMasterMainFrm pmmf) {
 		super();
 		this.pmmf = pmmf;
+		setPrdList();
 	}// PcbMasterMainEvt
 
 	@Override
@@ -83,7 +89,7 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 	}// setSeats
 
 	public void setOrdList(List<SetOrdListVO> ordList) {
-
+			
 	}// setOrdList
 
 	public void ordCanCle(String prdNum) {
@@ -91,7 +97,27 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 	}// ordCanCle
 
 	public void setPrdList() {
-
+		PcbDAO p_dao= PcbDAO.getInstance();
+		try {
+			List<SetPrdListVO> spl = p_dao.prdList();
+			DefaultTableModel dtm = pmmf.getDtmPrdList();
+			SetPrdListVO sol=null;
+			Object[] rowData = null;
+			for(int i=0;i<spl.size();i++) {
+				sol=spl.get(i);
+				
+				rowData = new Object[5];
+				rowData[0]=sol.getPrdNum();
+				rowData[1]=sol.getPrdCate();
+				rowData[2]=sol.getPrdName();
+				rowData[3]=sol.getPrice();
+				rowData[4]=sol.getPrdInputTime();
+				
+				dtm.addRow(rowData);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}// setPrdList
 
 	public void openServer() {
