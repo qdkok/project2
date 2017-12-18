@@ -60,9 +60,9 @@ public class PcbAddPrdEvt implements ActionListener{
 				byte[] readData = new byte[512];
 				int temp=0;
 				//파일에서 읽어 들이는 스트림.
-				fis=new FileInputStream(readFile);
+//				fis=new FileInputStream(readFile);
 				//목적지에 파일을 생성하는 스트림	
-				fos=new FileOutputStream(writeFile);
+//				fos=new FileOutputStream(writeFile);
 				//큰 이미지 기록
 				while( (temp=fis.read(readData)) != -1 ) {
 					//파일에서 읽어들인 내용을 파일로 보낸다.

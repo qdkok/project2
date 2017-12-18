@@ -34,7 +34,7 @@ public class PcbMasterMainFrm extends JFrame {
 		//----------------------------------상품관리-----------------------------
 		 String[] productColumn= {"상품번호","분류","상품명","단가","최종수정시간"};
 	      //2.컬럼 값 저장 배열
-	      String[][] productList=new String[10][6];
+	      String[][] productList=new String[0][6];
 	      //3.DefaultTableModel 을 생성하고 값 할당
 	      dtmPrdList=new DefaultTableModel(productList,productColumn);
 	      //4.DefaultTableModel을 사용하여 JTable을 생성
