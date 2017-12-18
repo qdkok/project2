@@ -51,12 +51,12 @@ public class PcbMasterMainFrm extends JFrame {
 	     
 	      //------------------------ 좌석관리----------------------------
 	      int x=170, y=150;
-	      JButton [] btnarr=new JButton[20];
+	      btnSeats=new JButton[20];
 	      for(int i=0 ; i<20 ; i++) {
-	    	 btnarr[i] = new JButton("좌석"+(i+1));
-	         jpSeats.add(btnarr[i]);
+	    	 btnSeats[i] = new JButton("좌석"+(i+1));
+	         jpSeats.add(btnSeats[i]);
 	         
-	         btnarr[i].setBounds(x, y, 150, 150);
+	         btnSeats[i].setBounds(x, y, 150, 150);
 	         x+=160;
 	         switch (i) {
 	         case 5: x=10; y+=160; break;
@@ -110,6 +110,7 @@ public class PcbMasterMainFrm extends JFrame {
 	      inJp4.setBounds(10,600,1200,250);
 	      inJp4.setLayout(null);
 	      
+	      
 	      btnOrdCancle = new JButton("주문취소");
 	      inJp4.add(btnOrdCancle);
 	      btnOrdCancle.setBounds(940, 10, 100, 50);
@@ -130,10 +131,17 @@ public class PcbMasterMainFrm extends JFrame {
 	      setVisible(true);
 	      
 	      PcbMasterMainEvt pmme = new PcbMasterMainEvt(this);
-	      btnSeats[1].addActionListener(pmme);
+	      btnAddTime.addActionListener(pmme);
+	      //모든 좌석 버튼에 대해 actionListener 을 부여
+	      for(int i= 0 ; i < btnSeats.length ;i++) {
+	    	  btnSeats[i].addActionListener(pmme);
+	      }//end for
 	      
+	      btnPrdAdd.addActionListener(pmme);
+	      btnPrdUpdate.addActionListener(pmme);
 	      
 	}
+
 
 	public JButton[] getBtnSeats() {
 		return btnSeats;
@@ -221,6 +229,9 @@ public class PcbMasterMainFrm extends JFrame {
 
 	public void setPrdcate(DefaultComboBoxModel prdcate) {
 		this.prdcate = prdcate;
+	}
+	public static void main(String[] args) {
+		new PcbMasterMainFrm();
 	}
 
 }
