@@ -22,7 +22,7 @@ public class PcbUserDAO {
 	private static PcbUserDAO pu_dao;
 	
 	private PcbUserDAO() {
-		
+		 
 	}//DosotDAO
 	
 	public static PcbUserDAO getInstance() {
