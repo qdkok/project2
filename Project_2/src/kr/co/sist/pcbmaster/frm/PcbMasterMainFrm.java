@@ -20,11 +20,12 @@ public class PcbMasterMainFrm extends JFrame {
 	private JButton btnAddTime,btnOrdCancle,btnPrdAdd,btnPrdUpdate,btnPrdDelete;
 	private DefaultTableModel dtmOrdList,dtmPrdList;
 	private JTable tOrdList,tPrdList;
+	 JTabbedPane jtp;
 	private DefaultComboBoxModel prdcate;
 	
 	public PcbMasterMainFrm() {
 		super("관리자 페이지");
-		
+		 jtp = new JTabbedPane();
 		JPanel jpSeats = new JPanel();
 		JPanel jpProducts = new JPanel();
 		JPanel jpOrder = new JPanel();
@@ -34,18 +35,28 @@ public class PcbMasterMainFrm extends JFrame {
 		//----------------------------------상품관리-----------------------------
 		 String[] productColumn= {"상품번호","분류","상품명","단가","최종수정시간"};
 	      //2.컬럼 값 저장 배열
-	      String[][] productList=new String[10][6];
+	      String[][] productList=new String[0][6];
 	      //3.DefaultTableModel 을 생성하고 값 할당
 	      dtmPrdList=new DefaultTableModel(productList,productColumn);
 	      //4.DefaultTableModel을 사용하여 JTable을 생성
-	      tPrdList=new JTable(dtmPrdList);
+	      tPrdList=new JTable(dtmPrdList) {
+	    	  @Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+	      };
 	      //--------------------------------상품관리--------------------------
 	      
 	      //--------------------------------주문확인--------------------------
 	      String[] orderColumn = {"주문번호","좌석번호","상품명","수량","금액","상태","주문시간"};
-	      String[][] orderList=new String[10][6];
+	      String[][] orderList=new String[0][6];
 	      dtmOrdList = new DefaultTableModel(orderList, orderColumn);
-	      tOrdList=new JTable(dtmOrdList);
+	      tOrdList=new JTable(dtmOrdList) {
+	    	  @Override
+				public boolean isCellEditable(int row, int column) {
+					return false;
+				}
+	      };
 	      //--------------------------------주문확인------------------------------
 	      
 	     
@@ -65,7 +76,7 @@ public class PcbMasterMainFrm extends JFrame {
 	      }//end for
 	      //------------------------ 좌석관리----------------------------
 	      
-	      JTabbedPane jtp = new JTabbedPane();
+	     
 	      
 	      JScrollPane jsp= new JScrollPane(tPrdList);
 	      jpSeats.setLayout(null);
@@ -139,7 +150,9 @@ public class PcbMasterMainFrm extends JFrame {
 	      
 	      btnPrdAdd.addActionListener(pmme);
 	      btnPrdUpdate.addActionListener(pmme);
-	      
+	      btnOrdCancle.addActionListener(pmme);
+	      tPrdList.addMouseListener(pmme);
+	      tOrdList.addMouseListener(pmme);
 	}
 
 
@@ -230,8 +243,9 @@ public class PcbMasterMainFrm extends JFrame {
 	public void setPrdcate(DefaultComboBoxModel prdcate) {
 		this.prdcate = prdcate;
 	}
-	public static void main(String[] args) {
-		new PcbMasterMainFrm();
-	}
 
+
+	public JTabbedPane getJtp() {
+		return jtp;
+	}
 }

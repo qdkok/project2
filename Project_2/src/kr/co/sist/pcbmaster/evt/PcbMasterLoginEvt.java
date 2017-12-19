@@ -4,14 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JOptionPane;
 
+import kr.co.sist.pcbmaster.dao.PcbDAO;
 import kr.co.sist.pcbmaster.frm.PcbMasterLoginFrm;
 import kr.co.sist.pcbmaster.frm.PcbMasterMainFrm;
+import kr.co.sist.pcbmaster.vo.PcbMasterLoginVO;
 
 
 public class PcbMasterLoginEvt extends WindowAdapter implements ActionListener {
@@ -42,15 +44,23 @@ public class PcbMasterLoginEvt extends WindowAdapter implements ActionListener {
 	}//actionPerformed
 	
 	public void checkLogin() {
+		
 		String id = pmlf.getTfID().getText();
 		String pass = pmlf.getTfPass().getText();
+
+		PcbDAO p_dao=PcbDAO.getInstance();
 		
-		if(admin.get(id)!=null && admin.get(id).equals(pass)) {
-			new PcbMasterMainFrm();
-			pmlf.setVisible(false);
-		}else {
-			JOptionPane.showMessageDialog(pmlf, "아이디와 비밀번호를 확인하세요");
-		}//end else
+		try {
+			if(p_dao.masterLogin(new PcbMasterLoginVO(id, pass))) {
+				new PcbMasterMainFrm();
+				pmlf.setVisible(false);
+			}else {
+				JOptionPane.showMessageDialog(pmlf, "아이디와 비밀번호를 확인하세요");
+			}//end else
+		} catch (SQLException e) {
+			System.out.println("로그인 중 문제발생");
+			e.printStackTrace();
+		}//catch
 		
 	}//checkLogin
 

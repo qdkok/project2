@@ -6,7 +6,8 @@ public class PcbMasterRun {
 
 	public static void main(String[] args) {
 		new PcbMasterLoginFrm();
-		System.out.println("테스트");
 		//test입니다
 	}//main
+	
 }//class
+
