@@ -31,7 +31,6 @@ public class PcbStatusFrm extends JFrame {
 		super();
 		this.pmme = pmme;
 		this.pmmf = pmmf;
-		
 		lblSeatNum = new JLabel("ÁÂ¼®"+(Integer.parseInt(seatNum)+1));
 		lblId = new JLabel("ID : ");
 		lblName = new JLabel("»ç¿ëÀÚ : ");
@@ -86,7 +85,8 @@ public class PcbStatusFrm extends JFrame {
 		setBounds(700,80,500,700);
 	    setVisible(true);
 	    
-	    PcbStatusEvt pse = new PcbStatusEvt(this,null,null,null,null);
+	    PcbStatusEvt pse = new PcbStatusEvt(this, pmmf, pmme, seatNum, pms);
+	    
 	    addTime.addActionListener(pse);
 	    sendMsg.addActionListener(pse);
 	    useEnd.addActionListener(pse);
@@ -171,9 +171,6 @@ public class PcbStatusFrm extends JFrame {
 
 	public void setDcbm(DefaultComboBoxModel dcbm) {
 		this.dcbm = dcbm;
-	}
-	public static void main(String[] args) {
-		new PcbStatusFrm(null,null,null,null);
 	}
 }//class
 

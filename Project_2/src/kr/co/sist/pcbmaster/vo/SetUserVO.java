@@ -1,14 +1,16 @@
 package kr.co.sist.pcbmaster.vo;
 
 public class SetUserVO {
-	String id,name;
+	String id,name,startTime;
 	int leftTime;
-	public SetUserVO(String id, String name, int leftTime) {
+	
+	public SetUserVO(String id, String name, String startTime, int leftTime) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.startTime = startTime;
 		this.leftTime = leftTime;
-	}//SetUserVO
+	}
 	public String getId() {
 		return id;
 	}
@@ -21,11 +23,20 @@ public class SetUserVO {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
 	public int getLeftTime() {
 		return leftTime;
 	}
 	public void setLeftTime(int leftTime) {
 		this.leftTime = leftTime;
 	}
+	
+	
+	
 	
 }

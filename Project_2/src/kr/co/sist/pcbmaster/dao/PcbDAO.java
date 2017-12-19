@@ -40,8 +40,8 @@ public class PcbDAO {
 		
 		Properties prop = new Properties();
 		try {
-			//prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));kdy
-			prop.load(new FileReader("C:/dev/git/project2_sub/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));
+			prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));//kdy
+//			prop.load(new FileReader("C:/dev/git/project2_sub/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));
 		
 			Class.forName(prop.getProperty("driverClass"));
 	
@@ -91,9 +91,29 @@ public class PcbDAO {
 		return result;
 	}//masterLogin
 	
-	public List<SetSeatsVO> seats(){
-		List<SetSeatsVO> l=null;
-		return l;
+	public List<SetSeatsVO> seats() throws SQLException{
+		List<SetSeatsVO> seatList=new ArrayList<SetSeatsVO>();
+		
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
+		
+		try {
+			con=getConn();
+			String seat="select s.seats_num,m.mem_id,m.name,m.left_time from  seats s, member m where (s.mem_id=m.mem_id)"; 
+			
+			pstmt=con.prepareStatement( seat );
+			rs=pstmt.executeQuery();                
+			SetSeatsVO splVO =null; 
+			while(rs.next()) {
+				splVO=new SetSeatsVO(rs.getString("mem_id"),rs.getString("seats_num"), rs.getString("name"), rs.getInt("left_time"));
+				seatList.add(splVO);
+			}//while
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
+		
+		return seatList;
 	}//seats
 	
 	public AddTimeVO addTime() {
@@ -215,8 +235,27 @@ public class PcbDAO {
 		
 	}//delPrd
 	
-	public SetUserVO setUser() {
+	public SetUserVO setUser() throws SQLException {
+		
+		
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
 		SetUserVO su=null;
+		try {
+			con=getConn();
+			String seat="select to_char(s.LOGIN_TIME,'yyyy-mm-dd hh:mm')login_time,m.mem_id,m.name,m.left_time from  seats s, member m where (s.mem_id=m.mem_id)"; 
+			
+			pstmt=con.prepareStatement( seat );
+			rs=pstmt.executeQuery();                
+			if(rs.next()) {
+				su=new SetUserVO(rs.getString("mem_id"), rs.getString("name"),rs.getString("login_time"), rs.getInt("left_time"));
+			}//while
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
+		
+		
 		return su; 
 	}
 }//class
