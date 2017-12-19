@@ -30,6 +30,7 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		super();
 		this.pmmf = pmmf;
 		setPrdList();
+		setOrdList();
 	}// PcbMasterMainEvt
 
 	@Override
@@ -88,8 +89,30 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 
 	}// setSeats
 
-	public void setOrdList(List<SetOrdListVO> ordList) {
-			
+	public void setOrdList() {
+		PcbDAO p_dao= PcbDAO.getInstance();
+		try {
+			List<SetOrdListVO> solList = p_dao.ordList();
+			DefaultTableModel dtm = pmmf.getDtmOrdList();
+			SetOrdListVO sol=null;
+			Object[] rowData = null;
+			for(int i=0;i<solList.size();i++) {
+				sol=solList.get(i);
+				
+				rowData = new Object[7];
+				rowData[0]=sol.getOrdNum();
+				rowData[1]=sol.getSeatNum();
+				rowData[2]=sol.getPrdName();
+				rowData[3]=sol.getQuantity();
+				rowData[4]=sol.getPrice();
+				rowData[5]=sol.getStatus();
+				rowData[6]=sol.getOrdTime();
+				
+				dtm.addRow(rowData);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}// setOrdList
 
 	public void ordCanCle(String prdNum) {

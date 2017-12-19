@@ -43,7 +43,7 @@ public class PcbMasterMainFrm extends JFrame {
 	      
 	      //--------------------------------주문확인--------------------------
 	      String[] orderColumn = {"주문번호","좌석번호","상품명","수량","금액","상태","주문시간"};
-	      String[][] orderList=new String[10][6];
+	      String[][] orderList=new String[0][6];
 	      dtmOrdList = new DefaultTableModel(orderList, orderColumn);
 	      tOrdList=new JTable(dtmOrdList);
 	      //--------------------------------주문확인------------------------------

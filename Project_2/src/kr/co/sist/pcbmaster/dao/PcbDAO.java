@@ -109,8 +109,30 @@ public class PcbDAO {
 		
 	}//seatUpdate
 	
-	public List<SetOrdListVO> ordList(){
-		List<SetOrdListVO> sol=null;
+	public List<SetOrdListVO> ordList() throws SQLException{
+		List<SetOrdListVO> sol= new ArrayList<SetOrdListVO>();
+		
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
+		
+		try {
+			con=getConn();
+			String listord="select o.order_num,o.seats_num,p.prd_name,o.quantity,p.price*o.quantity price,o.status,to_char(o.order_time,'yyyy-mm-dd hh:mm') order_time from  orderlist o,product p where (o.prd_num=p.prd_num) order by order_time"; 
+			
+			pstmt=con.prepareStatement( listord );
+			rs=pstmt.executeQuery();
+			
+			SetOrdListVO solVO =null; 
+			while(rs.next()) {
+				solVO=new SetOrdListVO(rs.getString("ORDER_NUM"), rs.getString("SEATS_NUM"), rs.getString("prd_name"), rs.getString("status"), rs.getString("order_time"), rs.getInt("quantity"), rs.getInt("price"));
+				sol.add(solVO);
+			}//while
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
+		
+		
 		return sol;
 	}//ordList
 	
@@ -131,10 +153,10 @@ public class PcbDAO {
 		
 		try {
 			con=getConn();
-			String listprd="select prd_num, prd_name, price, category, input_date from product"; 
+			String listprd="select prd_num, prd_name, price, category, to_char(input_date,'yyyy-mm-dd hh:MM')input_date from product order by input_date"; 
 			
 			pstmt=con.prepareStatement( listprd );
-			rs=pstmt.executeQuery();
+			rs=pstmt.executeQuery();                
 			SetPrdListVO splVO =null; 
 			while(rs.next()) {
 				splVO=new SetPrdListVO(rs.getString("prd_num"), rs.getString("category"), rs.getString("prd_name"),  rs.getString("input_date"), rs.getInt("price"));
@@ -142,7 +164,7 @@ public class PcbDAO {
 			}//while
 		}finally {
 			dbClose(con, pstmt, rs);
-		}
+		}//finally
 		
 		
 		return spl;
