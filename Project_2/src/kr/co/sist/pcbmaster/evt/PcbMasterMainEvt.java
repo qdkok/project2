@@ -7,16 +7,12 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import jdk.nashorn.internal.scripts.JO;
 import kr.co.sist.pcbmaster.dao.PcbDAO;
 import kr.co.sist.pcbmaster.frm.PcbAddPrdFrm;
 import kr.co.sist.pcbmaster.frm.PcbMasterMainFrm;
