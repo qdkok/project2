@@ -58,9 +58,9 @@ public class PcbMasterLoginEvt extends WindowAdapter implements ActionListener {
 				JOptionPane.showMessageDialog(pmlf, "아이디와 비밀번호를 확인하세요");
 			}//end else
 		} catch (SQLException e) {
-			System.out.println("시발");
+			System.out.println("로그인 중 문제발생");
 			e.printStackTrace();
-		}
+		}//catch
 		
 	}//checkLogin
 
