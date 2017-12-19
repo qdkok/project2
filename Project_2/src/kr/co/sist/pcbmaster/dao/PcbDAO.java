@@ -125,7 +125,7 @@ public class PcbDAO {
 			
 			SetOrdListVO solVO =null; 
 			while(rs.next()) {
-				solVO=new SetOrdListVO(rs.getString("ORDER_NUM"), rs.getString("SEATS_NUM"), rs.getString("prd_name"), rs.getString("status"), rs.getString("order_time"), rs.getInt("quantity"), rs.getInt("price"));
+				solVO=new SetOrdListVO(rs.getString("order_num"), rs.getString("seats_num"), rs.getString("prd_name"), rs.getString("status"), rs.getString("order_time"), rs.getInt("quantity"), rs.getInt("price"));
 				sol.add(solVO);
 			}//while
 		}finally {
@@ -136,12 +136,42 @@ public class PcbDAO {
 		return sol;
 	}//ordList
 	
-	public void ordDelete(String ordNum) {
+	public void ordDelete(String ordNum) throws SQLException {//주문취소 전환
+
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
+		
+		try {
+			con=getConn();
+			String ordDel="delete from orderlist where order_num=?"; 
+			
+			pstmt=con.prepareStatement( ordDel );
+			pstmt.setString(1, ordNum);//index 1번부터
+			pstmt.executeUpdate();
+			
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
 		
 	}//ordDelete
 	
-	public void ordClear(String ordNum) {
+	public void ordClear(String ordNum) throws SQLException {//주문완료 전환
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
 		
+		try {
+			con=getConn();
+			String ordDel="update orderlist set end_time=sysdate, status='Y'  where order_num=?"; 
+			
+			pstmt=con.prepareStatement( ordDel );
+			pstmt.setString(1, ordNum);//index 1번부터
+			pstmt.executeUpdate();
+			
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
 	}//ordClear
 	
 	public List<SetPrdListVO> prdList() throws SQLException{

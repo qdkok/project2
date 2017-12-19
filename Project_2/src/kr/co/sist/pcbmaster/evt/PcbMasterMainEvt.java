@@ -10,6 +10,8 @@ import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
@@ -25,6 +27,11 @@ import kr.co.sist.pcbmaster.frm.PcbStatusFrm;
 public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionListener {
 	private PcbMasterMainFrm pmmf;
 	private PcbMasterServer pms;
+	
+	public static final int DOUBLE_CLICK = 2;
+	public static final int SEATS_TAB = 0;
+	public static final int PRODUCT_TAB = 1;
+	public static final int ORDER_TAB = 2;
 
 	public PcbMasterMainEvt(PcbMasterMainFrm pmmf) {
 		super();
@@ -71,6 +78,12 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		if(ae.getSource()==pmmf.getBtnPrdUpdate()) {
 			new PcbAddPrdFrm(this, null, true);
 		}//end if
+		if(ae.getSource()==pmmf.getBtnOrdCancle()) {
+			JTable jtTemp = pmmf.gettOrdList();
+			String ordNum = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 0);
+			System.out.println(ordNum);
+			ordCancle(ordNum);
+		}//end if
 		
 
 	}// actionPerformed
@@ -81,8 +94,28 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 	}// run
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		super.mouseClicked(e);
+	public void mouseClicked(MouseEvent me) {
+		JTabbedPane jtp = pmmf.getJtp();
+		
+		switch (jtp.getSelectedIndex()) {
+			case SEATS_TAB: break;
+			case PRODUCT_TAB: break;
+			case ORDER_TAB: {
+				switch (me.getClickCount()) {
+					case DOUBLE_CLICK:{
+						JTable jtTemp = pmmf.gettOrdList();
+						String ordNum = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 0);
+						String ordStatus = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 5);
+						if(ordStatus.equals("Y")) {
+							JOptionPane.showMessageDialog(pmmf, "이미처리된 주문입니다.");
+							return;
+						}//end if
+						ordClear(ordNum);
+					}
+				}//switch
+				break;
+			}//order_tab
+		}//switch
 	}// mouseClicked
 
 	public void setSeats() {
@@ -94,6 +127,7 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		try {
 			List<SetOrdListVO> solList = p_dao.ordList();
 			DefaultTableModel dtm = pmmf.getDtmOrdList();
+			dtm.setNumRows(0);
 			SetOrdListVO sol=null;
 			Object[] rowData = null;
 			for(int i=0;i<solList.size();i++) {
@@ -115,15 +149,50 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		}
 	}// setOrdList
 
-	public void ordCanCle(String prdNum) {
-
+	public void ordCancle(String ordNum) {
+		PcbDAO p_dao = PcbDAO.getInstance();
+		
+		if(ordNum==null) {
+			JOptionPane.showMessageDialog(pmmf, "삭제할 항목을 선택하세요!");
+			return;
+		}//end if
+		switch (JOptionPane.showConfirmDialog(pmmf, "선택한 주문을 삭제 하시겠습니까?")) {
+			case JOptionPane.OK_OPTION:{
+				try {
+					p_dao.ordDelete(ordNum);
+					JOptionPane.showMessageDialog(pmmf, "삭제 처리가 완료되었습니다.");
+					setOrdList();
+				} catch (SQLException e) {
+					System.out.println("주문삭제 오류");
+					e.printStackTrace();
+				}//catch
+			}
+		}//switch
 	}// ordCanCle
+	
+	public void ordClear(String ordNum) {
+		PcbDAO p_dao= PcbDAO.getInstance();
+		
+		switch (JOptionPane.showConfirmDialog(pmmf, "처리 완료 하시겠습니까?")) {
+		case JOptionPane.OK_OPTION:{
+			try {
+				p_dao.ordClear(ordNum);
+				JOptionPane.showMessageDialog(pmmf, "주문 처리가 완료되었습니다.");
+				setOrdList();
+			} catch (SQLException e) {
+				System.out.println("업데이트 오류");
+				e.printStackTrace();
+			}//catch
+		}
+	}//switch
+	}// ordClear
 
 	public void setPrdList() {
 		PcbDAO p_dao= PcbDAO.getInstance();
 		try {
 			List<SetPrdListVO> spl = p_dao.prdList();
 			DefaultTableModel dtm = pmmf.getDtmPrdList();
+			dtm.setNumRows(0);
 			SetPrdListVO sol=null;
 			Object[] rowData = null;
 			for(int i=0;i<spl.size();i++) {
