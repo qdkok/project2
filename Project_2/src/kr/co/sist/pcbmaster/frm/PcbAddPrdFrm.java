@@ -17,11 +17,12 @@ import javax.swing.border.TitledBorder;
 import kr.co.sist.pcbmaster.evt.PcbAddPrdEvt;
 import kr.co.sist.pcbmaster.evt.PcbMasterMainEvt;
 
+@SuppressWarnings("serial")
 public class PcbAddPrdFrm extends JFrame {
    private PcbMasterMainEvt pmme;
    private PcbSearchFrm pmmf;
    private ImageIcon img;
-   private JLabel ldlMenuImg;//선택된 이미지가 보여지는 Label
+   private JLabel lblMenuImg;//선택된 이미지가 보여지는 Label
    private JTextField prdName,prdPrice;//상품명, 단가
    private JButton prdOk,prdCancle,prdAddImg;//확인, 취소, 이미지등록
    private DefaultComboBoxModel<String> prdcate; //상품목록
@@ -33,8 +34,9 @@ public class PcbAddPrdFrm extends JFrame {
       this.pmme = pmme;
       this.pmmf = pmmf;
       
-      JPanel jpimg = new JPanel(); 
-      img=new ImageIcon();
+     img= new ImageIcon("C:/dev/git/project2_sub/img/홈런볼 2000.jpg");
+     lblMenuImg = new JLabel("");// 선택된 이미지 보여지는
+     lblMenuImg.setIcon(img);
       
       prdAddImg=new JButton("이미지등록");
       prdOk= new JButton("확인");
@@ -59,7 +61,7 @@ public class PcbAddPrdFrm extends JFrame {
       prdPrice=new JTextField("단가 입력");
       
       setLayout(null);
-      add(jpimg);
+      add(lblMenuImg);
       add(prdAddImg);
       add(prdOk);
       add(prdCancle);
@@ -72,7 +74,7 @@ public class PcbAddPrdFrm extends JFrame {
       add(prdName);
       add(prdPrice);
       
-      jpimg.setBounds(100, 50, 300, 300);
+      lblMenuImg.setBounds(100, 50, 300, 300);
       prdAddImg.setBounds(200, 380, 100, 30);
       prdOk.setBounds(120, 630, 100, 50);
       prdCancle.setBounds(280, 630, 100, 50);
@@ -85,8 +87,7 @@ public class PcbAddPrdFrm extends JFrame {
       prdName.setBounds(250, 500, 150, 30);
       prdPrice.setBounds(250, 550, 150, 30);
       
-      //페널에 테두리 보이게 임시로 설정
-      jpimg.setBorder(new TitledBorder(""));
+      lblMenuImg.setBorder(new TitledBorder("이미지"));
       
       setLayout(null);
       
@@ -98,8 +99,16 @@ public class PcbAddPrdFrm extends JFrame {
       prdAddImg.addActionListener(pape);
       
    }//PcbPrdFrm
-   
-   public PcbMasterMainEvt getPmme() {
+
+public JLabel getLblMenuImg() {
+	return lblMenuImg;
+}
+
+public void setLdlMenuImg(JLabel lblMenuImg) {
+	this.lblMenuImg = lblMenuImg;
+}
+
+public PcbMasterMainEvt getPmme() {
       return pmme;
    }
    
