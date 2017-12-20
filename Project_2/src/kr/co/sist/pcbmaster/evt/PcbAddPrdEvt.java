@@ -56,7 +56,7 @@ public class PcbAddPrdEvt implements ActionListener{
 			JOptionPane.showMessageDialog(papf, "가격은 숫자만 입력해주세여");
 			prdPrice.requestFocus();
 			return;
-		}//end catch
+		}//end catch 
 		
 		//콤보박스 넘기기 위해 선언
 		JComboBox<String> cb = papf.getJcbcate();
