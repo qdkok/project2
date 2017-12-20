@@ -16,8 +16,10 @@ import javax.swing.table.DefaultTableModel;
 import kr.co.sist.pcbmaster.dao.PcbDAO;
 import kr.co.sist.pcbmaster.frm.PcbAddPrdFrm;
 import kr.co.sist.pcbmaster.frm.PcbMasterMainFrm;
+import kr.co.sist.pcbmaster.frm.PcbSearchFrm;
 import kr.co.sist.pcbmaster.vo.SetOrdListVO;
 import kr.co.sist.pcbmaster.vo.SetPrdListVO;
+import kr.co.sist.pcbmaster.vo.SetSeatsVO;
 import kr.co.sist.pcbmaster.frm.PcbStatusFrm;
 
 public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionListener {
@@ -32,6 +34,7 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 	public PcbMasterMainEvt(PcbMasterMainFrm pmmf) {
 		super();
 		this.pmmf = pmmf;
+		setSeats();
 		setPrdList();
 		setOrdList();
 	}// PcbMasterMainEvt
@@ -41,7 +44,9 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		boolean flag = true;
 		
 		if (ae.getSource() == pmmf.getBtnAddTime()) {
-			while (flag) {
+			
+			new PcbSearchFrm(this);
+			/*while (flag) {
 				// 시간추가할 아이디를 검색하는 메시지 다이얼로그
 				String id = JOptionPane.showInputDialog(pmmf, "아이디 입력");
 				if ("".equals(id)) {
@@ -54,7 +59,7 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 					flag = false;
 				}//end else
 			}//end while
-		}//end if
+*/		}//end if
 
 		// --------------------------------강사님이 도와주심...ㅎ--------------------------
 		// --------------------------------좌석버튼을 눌렀을 경우 이벤트 발생--------------------------
@@ -115,7 +120,25 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 	}// mouseClicked
 
 	public void setSeats() {
-
+		PcbDAO p_dao= PcbDAO.getInstance();
+		JButton [] seat = pmmf.getBtnSeats();
+		List<SetSeatsVO> lss=null;
+		
+		try {
+			lss = p_dao.seats();
+			for(int i=0;i<seat.length;i++) {
+				if(i<lss.size()) {
+					seat[i].setText("<html>좌석"+(i+1)+"<br>사용자 : "+lss.get(i).getId()+"<br>남은시간 : "+lss.get(i).getLeftTime()+"분");
+				}else {
+					seat[i].setText("좌석"+(i+1));
+				}
+			}//end for
+		} catch (SQLException e) {
+			System.out.println("좌석 호출 실패");
+			e.printStackTrace();
+		}//catch
+		
+		
 	}// setSeats
 
 	public void setOrdList() {
