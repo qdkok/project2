@@ -101,7 +101,7 @@ public class PcbDAO {
 		
 		try {
 			con=getConn();
-			String seat="select s.seats_num,m.mem_id,m.name,m.left_time from  seats s, member m where (s.mem_id=m.mem_id)"; 
+			String seat="select s.seats_num,m.mem_id,m.name,m.left_time from  seats s, member m where (s.mem_id=m.mem_id) and login_status='Y'"; 
 			
 			pstmt=con.prepareStatement( seat );
 			rs=pstmt.executeQuery();                
@@ -117,13 +117,48 @@ public class PcbDAO {
 		return seatList;
 	}//seats
 	
-	public AddTimeVO addTime() {
-		AddTimeVO at=null;
-		return at;
+	public void addTime(AddTimeVO at) throws SQLException {
+		
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
+		
+		try {
+			con=getConn();
+			String ordDel="update member set left_time=left_time+? where mem_id=?"; 
+			
+			pstmt=con.prepareStatement( ordDel );
+			pstmt.setInt(1, at.getTime());//index 1번부터
+			pstmt.setString(2, at.getId());//index 2번부터
+			pstmt.executeUpdate();
+			
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
+		
+		
 	}//AddTimeVO
 	
-	public List<SearchIdVO> searchId(){
-		List<SearchIdVO> sid=null;
+	public SearchIdVO searchId(String id) throws SQLException{
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
+		SearchIdVO sid =null; 
+		
+		try {
+			con=getConn();
+			String serachID="select NAME, LEFT_TIME from member where mem_id=?"; 
+			pstmt=con.prepareStatement( serachID );
+			pstmt.setString(1, id);
+			rs=pstmt.executeQuery();     
+			
+			if(rs.next()) {
+				sid = new SearchIdVO(id, rs.getString("name"), rs.getInt("left_time"));
+			}//while
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
+		
 		return sid;
 	}//searchId
 	
@@ -242,7 +277,7 @@ public class PcbDAO {
 		
 	}//delPrd
 	
-	public SetUserVO setUser() throws SQLException {
+	public SetUserVO setUser(String seatNum) throws SQLException {
 		
 		
 		Connection con = null;
@@ -251,9 +286,11 @@ public class PcbDAO {
 		SetUserVO su=null;
 		try {
 			con=getConn();
-			String seat="select to_char(s.LOGIN_TIME,'yyyy-mm-dd hh:mm')login_time,m.mem_id,m.name,m.left_time from  seats s, member m where (s.mem_id=m.mem_id)"; 
-			
-			pstmt=con.prepareStatement( seat );
+			StringBuffer seat = new StringBuffer(); 
+			seat.append("select to_char(s.LOGIN_TIME,'yyyy-mm-dd hh:mm')login_time,m.mem_id,m.name,m.left_time")
+				.append(" from  seats s, member m").append(" where (s.mem_id=m.mem_id) and LOGIN_STATUS='Y' and s.seats_num=? "); 
+			pstmt=con.prepareStatement( seat.toString() );
+			pstmt.setString(1, seatNum);
 			rs=pstmt.executeQuery();                
 			if(rs.next()) {
 				su=new SetUserVO(rs.getString("mem_id"), rs.getString("name"),rs.getString("login_time"), rs.getInt("left_time"));

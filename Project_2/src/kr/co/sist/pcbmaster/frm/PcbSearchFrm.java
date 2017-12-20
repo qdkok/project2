@@ -10,6 +10,7 @@ import javax.swing.JTextField;
 import kr.co.sist.pcbmaster.evt.PcbSearchEvt;
 import kr.co.sist.pcbmaster.evt.PcbMasterMainEvt;
 
+@SuppressWarnings("serial")
 public class PcbSearchFrm extends JDialog {
 	private PcbMasterMainEvt pmme;
 	private JTextField searchId; //아이디 검색
@@ -28,7 +29,7 @@ public class PcbSearchFrm extends JDialog {
 		jlTime = new JLabel("◎남은 시간 : 1:00");
 		
 		addTime=new DefaultComboBoxModel<>();
-		String[]time= new String[] {"시간선택","1:00","2:00","3:00","4:00","5:00","6:00","7:00","8:00","9:00", "10:00"};
+		String[]time= new String[] {"1:00","2:00","3:00","4:00","5:00"};
 		for(String adtime:time) {
 			addTime.addElement(adtime);
 		}//end for
@@ -53,6 +54,11 @@ public class PcbSearchFrm extends JDialog {
 		
 		jcbAdTime.setBounds(162, 70, 85, 25);//시간추가
 		btnAddTime.setBounds(270,70,90,30);//시간추가 버튼
+		
+		PcbSearchEvt pse = new PcbSearchEvt(this);
+		btnSearch.addActionListener(pse);
+		btnAddTime.addActionListener(pse);
+		
 		setVisible(true);
 		setBounds(500, 300, 390, 150);
 	}//PcbSearchFrm
@@ -95,6 +101,18 @@ public class PcbSearchFrm extends JDialog {
 
 	public void setJlTime(JLabel jlTime) {
 		this.jlTime = jlTime;
+	}
+
+	public PcbMasterMainEvt getPmme() {
+		return pmme;
+	}
+
+	public DefaultComboBoxModel<String> getAddTime() {
+		return addTime;
+	}
+
+	public JComboBox<String> getJcbAdTime() {
+		return jcbAdTime;
 	}
 	
 }
