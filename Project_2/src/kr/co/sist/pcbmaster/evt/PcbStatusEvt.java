@@ -62,8 +62,7 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 	public void run() {
 		try {
 			while(true) {
-				Thread.sleep(1000 *1);
-				System.out.println("tt");
+				Thread.sleep(1000 *60);
 				setUser(this.seatNum);
 			}//while
 		} catch (InterruptedException e) {
@@ -72,6 +71,7 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 		}
 	}//run
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void windowClosing(WindowEvent e) {
 		setting.stop();
@@ -80,7 +80,6 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
 		super.windowClosed(e);
 	}
 
