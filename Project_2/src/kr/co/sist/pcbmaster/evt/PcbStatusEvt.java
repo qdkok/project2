@@ -21,7 +21,9 @@ public class PcbStatusEvt implements Runnable,ActionListener {
 		super();
 		this.psf = psf;
 		this.pmme = pmme;
-		setUser();
+		seatNum="seat_"+ (seatNum.length()==1?"0"+seatNum:seatNum);
+		System.out.println(seatNum);
+		setUser(seatNum);
 	}
 
 	@Override
@@ -67,14 +69,13 @@ public class PcbStatusEvt implements Runnable,ActionListener {
 		JOptionPane.showConfirmDialog(psf, jsp); //showMessageDialog로 출력
 	}//addTime
 	
-	public void setUser() {
+	public void setUser(String seatNum) {
 		PcbDAO p_dao=PcbDAO.getInstance();
 		try {
-			SetUserVO suv=p_dao.setUser();
-			String text = psf.getLblId().getText();
-			psf.getLblId().setText(text+suv.getId());
-			psf.getLblName().setText(text+suv.getName());
-			psf.getLblTime().setText(text+suv.getLeftTime());
+			SetUserVO suv=p_dao.setUser(seatNum);
+			psf.getLblId().setText(psf.getLblId().getText()+suv.getId());
+			psf.getLblName().setText(psf.getLblName().getText()+suv.getName());
+			psf.getLblTime().setText(psf.getLblTime().getText()+suv.getLeftTime());
 		} catch (SQLException e) {
 			System.out.println("사용자정보 로딩 에러");
 			e.printStackTrace();

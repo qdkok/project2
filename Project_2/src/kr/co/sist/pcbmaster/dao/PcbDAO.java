@@ -101,7 +101,7 @@ public class PcbDAO {
 		
 		try {
 			con=getConn();
-			String seat="select s.seats_num,m.mem_id,m.name,m.left_time from  seats s, member m where (s.mem_id=m.mem_id)"; 
+			String seat="select s.seats_num,m.mem_id,m.name,m.left_time from  seats s, member m where (s.mem_id=m.mem_id) and login_status='Y'"; 
 			
 			pstmt=con.prepareStatement( seat );
 			rs=pstmt.executeQuery();                
@@ -242,7 +242,7 @@ public class PcbDAO {
 		
 	}//delPrd
 	
-	public SetUserVO setUser() throws SQLException {
+	public SetUserVO setUser(String seatNum) throws SQLException {
 		
 		
 		Connection con = null;
@@ -251,9 +251,11 @@ public class PcbDAO {
 		SetUserVO su=null;
 		try {
 			con=getConn();
-			String seat="select to_char(s.LOGIN_TIME,'yyyy-mm-dd hh:mm')login_time,m.mem_id,m.name,m.left_time from  seats s, member m where (s.mem_id=m.mem_id)"; 
-			
-			pstmt=con.prepareStatement( seat );
+			StringBuffer seat = new StringBuffer(); 
+			seat.append("select to_char(s.LOGIN_TIME,'yyyy-mm-dd hh:mm')login_time,m.mem_id,m.name,m.left_time")
+				.append(" from  seats s, member m").append(" where (s.mem_id=m.mem_id) and LOGIN_STATUS='Y' and s.seats_num=? "); 
+			pstmt=con.prepareStatement( seat.toString() );
+			pstmt.setString(1, seatNum);
 			rs=pstmt.executeQuery();                
 			if(rs.next()) {
 				su=new SetUserVO(rs.getString("mem_id"), rs.getString("name"),rs.getString("login_time"), rs.getInt("left_time"));
