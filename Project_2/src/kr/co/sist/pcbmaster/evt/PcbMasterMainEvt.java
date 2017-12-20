@@ -75,11 +75,17 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		if(ae.getSource()==pmmf.getBtnPrdUpdate()) {
 			new PcbAddPrdFrm(this, null, true);
 		}//end if
+		
+		if(ae.getSource()==pmmf.getBtnPrdDelete()) {
+			delPrd();
+		}//end if
+		
 		if(ae.getSource()==pmmf.getBtnOrdCancle()) {
 			JTable jtTemp = pmmf.gettOrdList();
 			String ordNum = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 0);
 			ordCancle(ordNum);
 		}//end if
+		
 		
 
 	}// actionPerformed
@@ -107,7 +113,10 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		
 		switch (jtp.getSelectedIndex()) {
 			case SEATS_TAB: break;
-			case PRODUCT_TAB: break;
+			case PRODUCT_TAB:{
+				break;
+			}
+			
 			case ORDER_TAB: {
 				switch (me.getClickCount()) {
 					case DOUBLE_CLICK:{
@@ -249,6 +258,26 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 	}// delPrdBtn
 
 	public void delPrd() {
+	PcbDAO p_dao = PcbDAO.getInstance();
+		JTable jtTemp = pmmf.gettPrdList();
+		String prdNum = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 0);
+		if(prdNum==null) {
+			JOptionPane.showMessageDialog(pmmf, "삭제할 항목을 선택하세요!");
+			return;
+		}//end if
+		switch (JOptionPane.showConfirmDialog(pmmf, "선택한 상품을 삭제 하시겠습니까?")) {
+			case JOptionPane.OK_OPTION:{
+				try {
+					System.out.println(prdNum);
+					p_dao.delPrd(prdNum);
+					JOptionPane.showMessageDialog(pmmf, "삭제 처리가 완료되었습니다.");
+					setPrdList();
+				} catch (SQLException e) {
+					System.out.println("주문삭제 오류");
+					e.printStackTrace();
+				}//catch
+			}
+		}//switch
 
 	}// delPrd
 

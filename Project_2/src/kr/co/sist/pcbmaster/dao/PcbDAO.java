@@ -263,19 +263,72 @@ public class PcbDAO {
 		return spl;
 	}//prdList
 	
-	public void addPrdItme(PrdItemVO pi) {
+	public void addPrdItme(PrdItemVO pi) throws SQLException {
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
 		
+		try {
+			con=getConn();
+			String ordDel="insert into product(prd_num,prd_name, price, img, category) values(prd_num(),?,?,?,?)"; 
+			
+			System.out.println(pi.getPrdName()+pi.getPrdPrice()+pi.getPrdImg()+pi.getPrdCate());
+			pstmt=con.prepareStatement( ordDel );
+			pstmt.setString(1, pi.getPrdName());//index 1번부터
+			pstmt.setInt(2, pi.getPrdPrice());
+			pstmt.setString(3, pi.getPrdImg());
+			pstmt.setString(4, pi.getPrdCate());
+			pstmt.executeUpdate();
+			
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
 	}//addPrdItme
 	public void setPrdItme(PrdItemVO pi) {
 		
 	}//setPrdItme
-	public void editPrdItme(PrdItemVO pi) {
+	public void editPrdItme(PrdItemVO pi,String prdNum) throws SQLException {
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
 		
+		try {
+			con=getConn();
+			String ordDel="update product set prd_name=?, price=?, img=?, category=?, input_date=sysdate  where prd_num=? "; 
+			
+			pstmt=con.prepareStatement( ordDel );
+			pstmt.setString(1, pi.getPrdName());//index 1번부터
+			pstmt.setInt(2, pi.getPrdPrice());
+			pstmt.setString(3, pi.getPrdImg());
+			pstmt.setString(4, pi.getPrdCate());
+			pstmt.setString(5, prdNum);
+			pstmt.executeUpdate();
+			
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
 	}//editPrdItme
 	
-	public void delPrd(String prdNum) {
+	////////삭제////////////////////
+	public void delPrd(String prdNum) throws SQLException {
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
 		
+		try {
+			con=getConn();
+			String prdDel="delete from product where prd_num=? "; 
+			
+			pstmt=con.prepareStatement( prdDel );
+			pstmt.setString(1, prdNum);//index 1번부터
+			pstmt.executeUpdate();
+			
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
 	}//delPrd
+	////////삭제////////////////////
+	
 	
 	public SetUserVO setUser(String seatNum) throws SQLException {
 		

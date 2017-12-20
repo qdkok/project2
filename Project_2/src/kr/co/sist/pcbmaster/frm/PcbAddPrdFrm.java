@@ -44,7 +44,7 @@ public class PcbAddPrdFrm extends JFrame {
       prdcate=new DefaultComboBoxModel<>();
       
       //-------------------상품 목록 탭-----------------
-      String[]cate=new String[] {"라면","과자","음료수"};
+      String[]cate=new String[] {"라면","과자","음료"};
       for(String addc:cate) {
          prdcate.addElement(addc);
       }//end for
@@ -89,7 +89,7 @@ public class PcbAddPrdFrm extends JFrame {
       setVisible(true);
       setBounds(50,50,500,750);
       
-      PcbAddPrdEvt pape = new PcbAddPrdEvt(this, null);
+      PcbAddPrdEvt pape = new PcbAddPrdEvt(this, pmme);
       prdOk.addActionListener(pape);
       prdAddImg.addActionListener(pape);
       jcbcate.addActionListener(pape);
@@ -173,8 +173,5 @@ public void setPrdAddImg(JButton prdAddImg) {
       this.prdcate = prdcate;
    }
    
-   public static void main(String[] args) {
-    new PcbAddPrdFrm(null,null,false);
-}
    
 }//class

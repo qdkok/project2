@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
@@ -25,12 +26,13 @@ import kr.co.sist.pcbmaster.vo.PrdItemVO;
 public class PcbAddPrdEvt implements ActionListener{
 	private PcbAddPrdFrm papf;
 	private File writeFile;
+	private PcbMasterMainEvt pmme;
 
-	public PcbAddPrdEvt(PcbAddPrdFrm papf,PcbMasterMainFrm pmmf) {
+	public PcbAddPrdEvt(PcbAddPrdFrm papf,PcbMasterMainEvt pmme) {
 		super();
 		this.papf = papf;
+		this.pmme = pmme;
 	}//PcbPrdEvt
-	
 	public void prdAdd() {
 		if(writeFile == null) {
 			JOptionPane.showMessageDialog(papf, "상품 이미지를 선택해 주세요");
@@ -51,19 +53,35 @@ public class PcbAddPrdEvt implements ActionListener{
 		//상품 가격 입력 후 정수로 변환
 		int intPrice = 0;
 		try {
-		intPrice=Integer.parseInt(prdPrice.getText().trim());
+			intPrice=Integer.parseInt(prdPrice.getText().trim());
 		}catch(NumberFormatException nfe) {
 			JOptionPane.showMessageDialog(papf, "가격은 숫자만 입력해주세여");
 			prdPrice.requestFocus();
 			return;
-		}//end catch 
+		}//end catch
+		
+		String img = writeFile.getPath();
+		String name = papf.getPrdName().getText().trim();
 		
 		//콤보박스 넘기기 위해 선언
 		JComboBox<String> cb = papf.getJcbcate();
-		System.out.println(cb.getSelectedItem());
+		String cate = (String) cb.getSelectedItem();
+		
 		//값이 제대로 입력되었다면 발생된 값을 묶어서 처리하기 위해 VO에 추가
 		/*PrdItemVO pvo = new PrdItemVO(prdName.getText().trim(), writeFile.getName(), prdCate, prdPrice.getText().trim());*/
 		
+		PcbDAO p_dao = PcbDAO.getInstance();
+		
+		try {
+			p_dao.addPrdItme(new PrdItemVO(name, img, cate, intPrice));
+			JOptionPane.showMessageDialog(papf, "상품등록에 성공하셨습니다.");
+			pmme.setPrdList();
+			papf.dispose();
+		} catch (SQLException e) {
+			System.out.println("상품등록중 문제 발생");
+			e.printStackTrace();
+		}
+				
 	}//prdAdd
 	
 	public void prdUpdate() {
@@ -106,7 +124,6 @@ public class PcbAddPrdEvt implements ActionListener{
 			FileOutputStream fos = null;
 			byte[] readData = new byte[512];
 			int temp=0;
-			       
 			
 			//파일에서 읽어 들이는 스트림.
 			fis=new FileInputStream(readFile);
@@ -158,14 +175,18 @@ public class PcbAddPrdEvt implements ActionListener{
 			try {
 				setImg();
 			} catch (IOException e) {
-				JOptionPane.showMessageDialog(papf, "왜안되는거야 ㅅㅂ");
+				JOptionPane.showMessageDialog(papf, "이미지 변경 실패");
 				e.printStackTrace();
 			}
 		}//end if
 		if(ae.getSource()==papf.getJcbcate()) {
 			JComboBox<String> cb = papf.getJcbcate();
 			System.out.println(cb.getSelectedItem());
-		}
+		}//end if
+		
+		if(ae.getSource()==papf.getPrdCancle()) {
+			papf.dispose();
+		}//end if
 		
 	}//actionPerformed
  	
