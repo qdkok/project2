@@ -154,6 +154,7 @@ public class PcbMasterMainFrm extends JFrame {
 	      tPrdList.addMouseListener(pmme);
 	      tOrdList.addMouseListener(pmme);
 	      
+	      setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 
