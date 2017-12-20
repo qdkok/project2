@@ -58,7 +58,7 @@ public class PcbMasterLoginFrm extends JFrame {
 		
 		setVisible(true);
 		setBounds(100,100,400,350);
-		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}//PcbMasterLoginFrm
 
 	public JButton getBtnLogin() {

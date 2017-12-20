@@ -21,7 +21,7 @@ public class PcbMasterMainFrm extends JFrame {
 	private DefaultTableModel dtmOrdList,dtmPrdList;
 	private JTable tOrdList,tPrdList;
 	 JTabbedPane jtp;
-	private DefaultComboBoxModel prdcate;
+	private DefaultComboBoxModel<?> prdcate;
 	
 	public PcbMasterMainFrm() {
 		super("관리자 페이지");
@@ -153,6 +153,7 @@ public class PcbMasterMainFrm extends JFrame {
 	      btnOrdCancle.addActionListener(pmme);
 	      tPrdList.addMouseListener(pmme);
 	      tOrdList.addMouseListener(pmme);
+	      
 	}
 
 
@@ -236,11 +237,11 @@ public class PcbMasterMainFrm extends JFrame {
 		this.tPrdList = tPrdList;
 	}
 
-	public DefaultComboBoxModel getPrdcate() {
+	public DefaultComboBoxModel<?> getPrdcate() {
 		return prdcate;
 	}
 
-	public void setPrdcate(DefaultComboBoxModel prdcate) {
+	public void setPrdcate(DefaultComboBoxModel<?> prdcate) {
 		this.prdcate = prdcate;
 	}
 

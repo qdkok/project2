@@ -25,6 +25,8 @@ import kr.co.sist.pcbmaster.frm.PcbStatusFrm;
 public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionListener {
 	private PcbMasterMainFrm pmmf;
 	private PcbMasterServer pms;
+	private Thread setting;
+	
 	
 	public static final int DOUBLE_CLICK = 2;
 	public static final int SEATS_TAB = 0;
@@ -34,14 +36,17 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 	public PcbMasterMainEvt(PcbMasterMainFrm pmmf) {
 		super();
 		this.pmmf = pmmf;
+		
 		setSeats();
 		setPrdList();
 		setOrdList();
+		
+		setting = new Thread(this);
+		setting.start();
 	}// PcbMasterMainEvt
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		boolean flag = true;
 		
 		if (ae.getSource() == pmmf.getBtnAddTime()) {
 			
@@ -73,7 +78,6 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		if(ae.getSource()==pmmf.getBtnOrdCancle()) {
 			JTable jtTemp = pmmf.gettOrdList();
 			String ordNum = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 0);
-			System.out.println(ordNum);
 			ordCancle(ordNum);
 		}//end if
 		
@@ -82,7 +86,19 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 
 	@Override
 	public void run() {
-
+		
+		try {
+			while(true) {
+				Thread.sleep(1000 *60);
+				setSeats();
+				setPrdList();
+				setOrdList();
+			}//while
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}// run
 
 	@Override
@@ -120,7 +136,6 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 			for(int i=0;i<seat.length;i++) {
 				for(int j=0;j<lss.size();j++) {
 					flag=Integer.parseInt(lss.get(j).getSeatNum().substring(5));//좌석번호의 숫자와 자리비교후 같으면 ㄱㄱ
-					System.out.println(flag);
 					if(flag==i) {
 						seat[i].setText("<html>좌석"+(i+1)+"<br>사용자 : "+lss.get(j).getId()+"<br>남은시간 : "+lss.get(j).getLeftTime()+"분");
 					}//end if

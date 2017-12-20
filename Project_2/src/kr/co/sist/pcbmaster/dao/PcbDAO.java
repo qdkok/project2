@@ -117,13 +117,48 @@ public class PcbDAO {
 		return seatList;
 	}//seats
 	
-	public AddTimeVO addTime() {
-		AddTimeVO at=null;
-		return at;
+	public void addTime(AddTimeVO at) throws SQLException {
+		
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
+		
+		try {
+			con=getConn();
+			String ordDel="update member set left_time=left_time+? where mem_id=?"; 
+			
+			pstmt=con.prepareStatement( ordDel );
+			pstmt.setInt(1, at.getTime());//index 1번부터
+			pstmt.setString(2, at.getId());//index 2번부터
+			pstmt.executeUpdate();
+			
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
+		
+		
 	}//AddTimeVO
 	
-	public List<SearchIdVO> searchId(){
-		List<SearchIdVO> sid=null;
+	public SearchIdVO searchId(String id) throws SQLException{
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
+		SearchIdVO sid =null; 
+		
+		try {
+			con=getConn();
+			String serachID="select NAME, LEFT_TIME from member where mem_id=?"; 
+			pstmt=con.prepareStatement( serachID );
+			pstmt.setString(1, id);
+			rs=pstmt.executeQuery();     
+			
+			if(rs.next()) {
+				sid = new SearchIdVO(id, rs.getString("name"), rs.getInt("left_time"));
+			}//while
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
+		
 		return sid;
 	}//searchId
 	

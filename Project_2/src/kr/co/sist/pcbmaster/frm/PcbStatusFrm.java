@@ -3,11 +3,12 @@ package kr.co.sist.pcbmaster.frm;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.LayoutManager;
+import java.awt.event.WindowEvent;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,18 +18,17 @@ import kr.co.sist.pcbmaster.evt.PcbMasterServer;
 import kr.co.sist.pcbmaster.evt.PcbStatusEvt;
 
 @SuppressWarnings("serial")
-public class PcbStatusFrm extends JFrame {
+public class PcbStatusFrm extends JDialog  {
 	
 	private PcbMasterMainEvt pmme;
 	private PcbMasterMainFrm pmmf;
-	
 	private JButton addTime,sendMsg,useEnd;
 	private JLabel lblSeatNum,lblId,lblName,lblTime;
 	private DefaultComboBoxModel<String> dcbm;
 	private JComboBox<String> jcbTime;
 	
 	public PcbStatusFrm(PcbMasterMainEvt pmme, PcbMasterMainFrm pmmf,String seatNum,PcbMasterServer pms) {
-		super();
+		super(pmmf,"사용자관리",true);
 		this.pmme = pmme;
 		this.pmmf = pmmf;
 		lblSeatNum = new JLabel("좌석"+(Integer.parseInt(seatNum)+1));
@@ -83,14 +83,16 @@ public class PcbStatusFrm extends JFrame {
 		add(BorderLayout.SOUTH,pSouth);
 		
 		setBounds(700,80,500,700);
-	    setVisible(true);
+		PcbStatusEvt pse = new PcbStatusEvt(this, pmmf, pmme, seatNum, pms);
 	    
-	    PcbStatusEvt pse = new PcbStatusEvt(this, pmmf, pmme, seatNum, pms);
 	    
 	    addTime.addActionListener(pse);
 	    sendMsg.addActionListener(pse);
 	    useEnd.addActionListener(pse);
-	      
+	    addWindowListener(pse);
+	    
+	    setVisible(true);
+	    
 	}//PcbStatusFrm
 
 	public PcbMasterMainEvt getPmme() {
@@ -165,13 +167,11 @@ public class PcbStatusFrm extends JFrame {
 		this.lblTime = lblTime;
 	}
 
-	public DefaultComboBoxModel getDcbm() {
-		return dcbm;
+	public JComboBox<String> getJcbTime() {
+		return jcbTime;
 	}
 
-	public void setDcbm(DefaultComboBoxModel dcbm) {
-		this.dcbm = dcbm;
-	}
+	
 }//class
 
 
