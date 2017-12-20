@@ -1,16 +1,12 @@
 package kr.co.sist.pcbmaster.frm;
 
-import java.awt.Component;
-import java.awt.GridLayout;
 
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
@@ -27,7 +23,6 @@ public class PcbAddPrdFrm extends JFrame {
    private JButton prdOk,prdCancle,prdAddImg;//확인, 취소, 이미지등록
    private DefaultComboBoxModel<String> prdcate; //상품목록
    private JComboBox<String> jcbcate;//상품목록 탭 콤보박스
-   private boolean flag;
    
    public PcbAddPrdFrm(PcbMasterMainEvt pmme, PcbSearchFrm pmmf, boolean flag) {
       super("상품추가");
@@ -99,6 +94,7 @@ public class PcbAddPrdFrm extends JFrame {
       prdAddImg.addActionListener(pape);
       jcbcate.addActionListener(pape);
       
+      
    }//PcbPrdFrm
 
 public JComboBox<String> getJcbcate() {
@@ -106,7 +102,7 @@ public JComboBox<String> getJcbcate() {
 }
 
 public JTextField getPrdName() {
-	return prdName;    
+	return prdName;     
 }
 
 public JTextField getPrdPrice() {

@@ -25,6 +25,8 @@ import kr.co.sist.pcbmaster.frm.PcbStatusFrm;
 public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionListener {
 	private PcbMasterMainFrm pmmf;
 	private PcbMasterServer pms;
+	private Thread setting;
+	
 	
 	public static final int DOUBLE_CLICK = 2;
 	public static final int SEATS_TAB = 0;
@@ -34,41 +36,35 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 	public PcbMasterMainEvt(PcbMasterMainFrm pmmf) {
 		super();
 		this.pmmf = pmmf;
+		
 		setSeats();
 		setPrdList();
 		setOrdList();
+		
+		setting = new Thread(this);
+		setting.start();
 	}// PcbMasterMainEvt
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
-		boolean flag = true;
 		
 		if (ae.getSource() == pmmf.getBtnAddTime()) {
 			
 			new PcbSearchFrm(this);
-			/*while (flag) {
-				// 시간추가할 아이디를 검색하는 메시지 다이얼로그
-				String id = JOptionPane.showInputDialog(pmmf, "아이디 입력");
-				if ("".equals(id)) {
-					JOptionPane.showMessageDialog(pmmf, "아이디를 입력하세요.");
-				} else if (id == null) {
-					flag = false;
-				} else {
-					String[] time = { "1:00", "2:00", "3:00", "4:00", "5:00" };
-					JOptionPane.showInputDialog(pmmf, "추가할 시간", "시간추가", JOptionPane.QUESTION_MESSAGE, null, time, "1:00");
-					flag = false;
-				}//end else
-			}//end while
-*/		}//end if
+		}
 
 		// --------------------------------강사님이 도와주심...ㅎ--------------------------
 		// --------------------------------좌석버튼을 눌렀을 경우 이벤트 발생--------------------------
-		JButton[] temp = pmmf.getBtnSeats();
-		for (int i = 0; i < temp.length; i++) {
-			if (ae.getSource() == temp[i]) {
-				new PcbStatusFrm(this, pmmf, String.valueOf(i), pms);
-			} // end if
-		} // end for
+			JButton[] temp = pmmf.getBtnSeats();
+			for (int i = 0; i < temp.length; i++) {
+				if (ae.getSource() == temp[i]) {
+					if(temp[i].getText().contains("사용자")) {
+						new PcbStatusFrm(this, pmmf, String.valueOf(i), pms);
+					}else {
+						JOptionPane.showMessageDialog(pmmf, "사용중인 좌석이 아닙니다.");
+					}
+				} // end if
+			} // end for
 		// --------------------------------강사님이 도와주심...ㅎ--------------------------
 		
 		//상품추가 버튼을 눌렀을 경우 이벤트 발생
@@ -82,7 +78,6 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		if(ae.getSource()==pmmf.getBtnOrdCancle()) {
 			JTable jtTemp = pmmf.gettOrdList();
 			String ordNum = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 0);
-			System.out.println(ordNum);
 			ordCancle(ordNum);
 		}//end if
 		
@@ -91,7 +86,19 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 
 	@Override
 	public void run() {
-
+		
+		try {
+			while(true) {
+				Thread.sleep(1000 *60);
+				setSeats();
+				setPrdList();
+				setOrdList();
+			}//while
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}// run
 
 	@Override
@@ -123,15 +130,17 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		PcbDAO p_dao= PcbDAO.getInstance();
 		JButton [] seat = pmmf.getBtnSeats();
 		List<SetSeatsVO> lss=null;
-		
+		int flag=-1;
 		try {
 			lss = p_dao.seats();
 			for(int i=0;i<seat.length;i++) {
-				if(i<lss.size()) {
-					seat[i].setText("<html>좌석"+(i+1)+"<br>사용자 : "+lss.get(i).getId()+"<br>남은시간 : "+lss.get(i).getLeftTime()+"분");
-				}else {
-					seat[i].setText("좌석"+(i+1));
-				}
+				for(int j=0;j<lss.size();j++) {
+					flag=Integer.parseInt(lss.get(j).getSeatNum().substring(5));//좌석번호의 숫자와 자리비교후 같으면 ㄱㄱ
+					if(flag==i) {
+						seat[i].setText("<html>좌석"+(i+1)+"<br>사용자 : "+lss.get(j).getId()+"<br>남은시간 : "+lss.get(j).getLeftTime()+"분");
+					}//end if
+				}//end for
+				
 			}//end for
 		} catch (SQLException e) {
 			System.out.println("좌석 호출 실패");
