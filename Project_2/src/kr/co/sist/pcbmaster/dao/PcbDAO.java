@@ -73,6 +73,7 @@ public class PcbDAO {
 		
 		boolean result=false;
 		try {
+	
 			con=getConn();
 			
 			String login="select pass from master where id='"+id+"'"; 
@@ -110,6 +111,7 @@ public class PcbDAO {
 		
 	}//seatUpdate
 	
+	//모든 주문 목록을 조회하는 일
 	public List<SetOrdListVO> ordList() throws SQLException{
 		List<SetOrdListVO> sol= new ArrayList<SetOrdListVO>();
 		
@@ -118,10 +120,14 @@ public class PcbDAO {
 		ResultSet rs = null;
 		
 		try {
+			//1.드라이버 로딩
+			//2.커넥션 얻기
 			con=getConn();
+			//3.쿼리문 생성 객체 얻기
 			String listord="select o.order_num,o.seats_num,p.prd_name,o.quantity,p.price*o.quantity price,o.status,to_char(o.order_time,'yyyy-mm-dd hh:mm') order_time from  orderlist o,product p where (o.prd_num=p.prd_num) order by order_time"; 
 			
 			pstmt=con.prepareStatement( listord );
+			//4.쿼리문 수행 후 결과 얻기
 			rs=pstmt.executeQuery();
 			
 			SetOrdListVO solVO =null; 
@@ -130,6 +136,7 @@ public class PcbDAO {
 				sol.add(solVO);
 			}//while
 		}finally {
+			//5.연결 끊기
 			dbClose(con, pstmt, rs);
 		}//finally
 		

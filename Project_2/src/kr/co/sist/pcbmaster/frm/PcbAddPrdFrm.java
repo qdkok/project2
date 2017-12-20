@@ -34,7 +34,7 @@ public class PcbAddPrdFrm extends JFrame {
       this.pmme = pmme;
       this.pmmf = pmmf;
       
-     img= new ImageIcon("C:/dev/git/project2_sub/img/홈런볼 2000.jpg");
+     img= new ImageIcon("");
      lblMenuImg = new JLabel("");// 선택된 이미지 보여지는
      lblMenuImg.setIcon(img);
       
@@ -97,8 +97,21 @@ public class PcbAddPrdFrm extends JFrame {
       PcbAddPrdEvt pape = new PcbAddPrdEvt(this, null);
       prdOk.addActionListener(pape);
       prdAddImg.addActionListener(pape);
+      jcbcate.addActionListener(pape);
       
    }//PcbPrdFrm
+
+public JComboBox<String> getJcbcate() {
+	return jcbcate;
+}
+
+public JTextField getPrdName() {
+	return prdName;
+}
+
+public JTextField getPrdPrice() {
+	return prdPrice;
+}
 
 public JLabel getLblMenuImg() {
 	return lblMenuImg;
