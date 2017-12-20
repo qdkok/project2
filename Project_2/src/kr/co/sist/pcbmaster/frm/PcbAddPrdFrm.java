@@ -106,7 +106,7 @@ public JComboBox<String> getJcbcate() {
 }
 
 public JTextField getPrdName() {
-	return prdName;    
+	return prdName;     
 }
 
 public JTextField getPrdPrice() {

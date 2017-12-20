@@ -40,7 +40,7 @@ public class PcbAddPrdEvt implements ActionListener{
 		//상품명, 가격 항목에 넣어졌는지 확인
 		JTextField prdName=papf.getPrdName();
 		JTextField prdPrice=papf.getPrdPrice();
-		
+		 
 		//상품명이 입력되지 않을 경우 메시지 다이얼로그 
 		if(prdName.getText().trim().equals("")) {
 			JOptionPane.showMessageDialog(papf, "상품명 입력하시오.");
