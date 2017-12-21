@@ -51,11 +51,25 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 		if(ae.getSource()==psf.getUseEnd()) { //사용종료 버튼을 클릭했을 때
 			switch (JOptionPane.showConfirmDialog(psf, "종료하시겠습니까?")) {
 				case JOptionPane.OK_OPTION:
+					stopUser();
+					pmme.setSeats();
 					psf.dispose();
 			}//end switch
 		}//end if
 		
 	}//actionPerformed
+	
+	public void stopUser() {
+		
+		PcbDAO p_dao = PcbDAO.getInstance();
+		try {
+			p_dao.seatUpdate(seatNum);
+			JOptionPane.showMessageDialog(psf, seatNum+"좌석의 사용이 종료되었습니다.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}//end stopUser
 	
 
 	@Override
@@ -71,15 +85,15 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 		}
 	}//run
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public void windowClosing(WindowEvent e) {
-		setting.stop();
-		super.windowClosing(e);
+		psf.dispose();
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void windowClosed(WindowEvent e) {
+		setting.stop();
 		super.windowClosed(e);
 	}
 

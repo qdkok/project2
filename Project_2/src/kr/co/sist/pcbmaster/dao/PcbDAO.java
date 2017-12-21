@@ -1,5 +1,6 @@
 package kr.co.sist.pcbmaster.dao;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -162,7 +163,23 @@ public class PcbDAO {
 		return sid;
 	}//searchId
 	
-	public void seatUpdate(String seatNum) {
+	public void seatUpdate(String seatNum) throws SQLException {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			con=getConn();
+			String exit="update SEATS set LOGIN_STATUS='N' where LOGIN_STATUS='Y' and seats_num=?";
+			
+			pstmt=con.prepareStatement(exit);
+			
+			pstmt.setString(1, seatNum);
+			pstmt.executeUpdate();
+			
+		}finally {
+			dbClose(con, pstmt, rs);
+		}
 		
 	}//seatUpdate
 	
@@ -284,9 +301,34 @@ public class PcbDAO {
 			dbClose(con, pstmt, rs);
 		}//finally
 	}//addPrdItme
-	public void setPrdItme(PrdItemVO pi) {
+	
+	
+	/////////////////////////////////////// 2017-12-20 숙제 ////////////////////////////////////////
+	public PrdItemVO setPrdItme(String prdNum) throws SQLException {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		PrdItemVO pi = null;
 		
+		try {
+			con=getConn();
+			String setPrd="select  PRD_NAME, PRICE, IMG, CATEGORY from product where PRD_NUM=?";
+			
+			pstmt=con.prepareStatement(setPrd);
+			pstmt.setString(1, prdNum);
+			rs=pstmt.executeQuery();
+			if(rs.next()) {
+				pi=new PrdItemVO(rs.getString("prd_name"), rs.getString("Img"), rs.getString("category"), rs.getInt("Price"));
+			}
+		} finally {
+			dbClose(con, pstmt, rs);
+		}
+		
+		return pi;
 	}//setPrdItme
+	/////////////////////////////////////// 2017-12-20 숙제 ////////////////////////////////////////
+	
+	
 	public void editPrdItme(PrdItemVO pi,String prdNum) throws SQLException {
 		Connection con = null;
 		PreparedStatement pstmt= null;
@@ -309,7 +351,7 @@ public class PcbDAO {
 		}//finally
 	}//editPrdItme
 	
-	////////삭제////////////////////
+	//////////////////삭제////////////////////
 	public void delPrd(String prdNum) throws SQLException {
 		Connection con = null;
 		PreparedStatement pstmt= null;
@@ -317,17 +359,34 @@ public class PcbDAO {
 		
 		try {
 			con=getConn();
-			String prdDel="delete from product where prd_num=? "; 
+			
+			String prdDel="select img from product where prd_num=? "; 
 			
 			pstmt=con.prepareStatement( prdDel );
 			pstmt.setString(1, prdNum);//index 1번부터
+			rs=pstmt.executeQuery();
+			
+			File delfile=null;
+			if(rs.next()) {
+				delfile=new File(rs.getString("img"));
+			}//end if
+			dbClose(con, pstmt, rs);
+			
+			con=getConn();
+			prdDel="delete from product where prd_num=? "; 
+			pstmt=con.prepareStatement( prdDel );
+			pstmt.setString(1, prdNum);//index 1번부터
 			pstmt.executeUpdate();
+			
+			if(delfile.exists()) {
+				delfile.delete();
+			}//end if
 			
 		}finally {
 			dbClose(con, pstmt, rs);
 		}//finally
 	}//delPrd
-	////////삭제////////////////////
+	///////////////삭제////////////////////
 	
 	
 	public SetUserVO setUser(String seatNum) throws SQLException {

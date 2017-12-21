@@ -4,6 +4,8 @@ import java.awt.FileDialog;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,24 +16,59 @@ import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
-import kr.co.sist.pcbclient.vo.PcbOrderVO;
-import kr.co.sist.pcbclient.vo.PcbSetMenuVO;
 import kr.co.sist.pcbmaster.dao.PcbDAO;
 import kr.co.sist.pcbmaster.frm.PcbAddPrdFrm;
 import kr.co.sist.pcbmaster.frm.PcbMasterMainFrm;
 import kr.co.sist.pcbmaster.vo.PrdItemVO;
 
-public class PcbAddPrdEvt implements ActionListener{
+public class PcbAddPrdEvt extends WindowAdapter implements ActionListener{
 	private PcbAddPrdFrm papf;
 	private File writeFile;
 	private PcbMasterMainEvt pmme;
-
-	public PcbAddPrdEvt(PcbAddPrdFrm papf,PcbMasterMainEvt pmme) {
+	private boolean flag,okflag,updateFlag; //추가or수정 확인 플래그
+	private String prdNum;
+	
+	
+	@Override
+	public void windowClosing(WindowEvent e) {
+		papf.dispose();
+	}
+	@Override
+	public void windowClosed(WindowEvent e) {
+		if(flag) {//수정일때
+			if(!okflag) {
+				if(updateFlag) {//이미지가 등록됬을때만 지우기
+					writeFile.delete();
+				}//end if
+			}//end if
+		}//end if
+		if(!flag) {//추가일때
+			if(!okflag) {
+				if(writeFile!=null) {//이미지가 등록됬을때만 지우기
+					writeFile.delete();
+				}//end if
+			}//end if
+		}//end if
+		super.windowClosed(e);
+	}
+	
+	
+	public PcbAddPrdEvt(PcbAddPrdFrm papf,PcbMasterMainFrm pmmf,PcbMasterMainEvt pmme, boolean flag) {
 		super();
 		this.papf = papf;
 		this.pmme = pmme;
+		this.flag = flag;
+		
+		if(flag) {
+			JTable jtemp=pmmf.gettPrdList();
+			prdNum=(String)jtemp.getValueAt(jtemp.getSelectedRow(), 0);
+			setPrdData(prdNum);
+//			System.out.println(papf.getPrdcate().getSelectedItem());
+		}//end if
+		
 	}//PcbPrdEvt
 	public void prdAdd() {
 		if(writeFile == null) {
@@ -76,6 +113,7 @@ public class PcbAddPrdEvt implements ActionListener{
 			p_dao.addPrdItme(new PrdItemVO(name, img, cate, intPrice));
 			JOptionPane.showMessageDialog(papf, "상품등록에 성공하셨습니다.");
 			pmme.setPrdList();
+			okflag=true;
 			papf.dispose();
 		} catch (SQLException e) {
 			System.out.println("상품등록중 문제 발생");
@@ -85,10 +123,74 @@ public class PcbAddPrdEvt implements ActionListener{
 	}//prdAdd
 	
 	public void prdUpdate() {
+		if(writeFile == null) {
+			JOptionPane.showMessageDialog(papf, "상품 이미지를 선택해 주세요");
+			return;
+		}//end if
 		
+		//상품명, 가격 항목에 넣어졌는지 확인
+		JTextField prdName=papf.getPrdName();
+		JTextField prdPrice=papf.getPrdPrice();
+		 
+		//상품명이 입력되지 않을 경우 메시지 다이얼로그 
+		if(prdName.getText().trim().equals("")) {
+			JOptionPane.showMessageDialog(papf, "상품명 입력하시오.");
+			prdName.requestFocus();
+			return;
+		}//end if
+		
+		//상품 가격 입력 후 정수로 변환
+		int intPrice = 0;
+		try {
+			intPrice=Integer.parseInt(prdPrice.getText().trim());
+		}catch(NumberFormatException nfe) {
+			JOptionPane.showMessageDialog(papf, "가격은 숫자만 입력해주세여");
+			prdPrice.requestFocus();
+			return;
+		}//end catch
+		
+		String img = writeFile.getPath();
+		String name = papf.getPrdName().getText().trim();
+		
+		//콤보박스 넘기기 위해 선언
+		JComboBox<String> cb = papf.getJcbcate();
+		String cate = (String) cb.getSelectedItem();
+		
+		
+		PcbDAO p_dao = PcbDAO.getInstance();
+		PrdItemVO pi = new PrdItemVO(name, img, cate, intPrice);
+		try {
+			p_dao.editPrdItme(pi, prdNum);
+			JOptionPane.showMessageDialog(papf, "상품수정에 성공하였습니다.");
+			pmme.setPrdList();
+			okflag=true;
+			papf.dispose();
+		} catch (SQLException e) {
+			System.out.println("상품등록중 문제 발생");
+			e.printStackTrace();
+		}
 	}//prdUpdate
 
-	public void setPrdData(PrdItemVO prdItem) {
+	public void setPrdData(String prdNum) {
+		PcbDAO p_dao =PcbDAO.getInstance();
+		try {
+			PrdItemVO pi = p_dao.setPrdItme(prdNum);
+			papf.getPrdName().setText(pi.getPrdName());
+			papf.getPrdPrice().setText(pi.getPrdPrice()+"");
+			papf.getPrdcate().setSelectedItem(pi.getPrdCate());
+			
+			writeFile = new File(pi.getPrdImg());
+			
+			ImageIcon img = new ImageIcon(writeFile.getAbsolutePath());
+			Image originImg = img.getImage();
+			Image changeImg = originImg.getScaledInstance(300, 300,  java.awt.Image.SCALE_SMOOTH);
+			ImageIcon finalImg = new ImageIcon(changeImg);
+			papf.getLblMenuImg().setIcon(finalImg);
+			
+		} catch (SQLException e) {
+			System.out.println("상품을 불러오는 도중 문제발생");
+			e.printStackTrace();
+		}
 		
 	}//setItem 
 	
@@ -125,19 +227,19 @@ public class PcbAddPrdEvt implements ActionListener{
 			byte[] readData = new byte[512];
 			int temp=0;
 			
-			//파일에서 읽어 들이는 스트림.
-			fis=new FileInputStream(readFile);
-			//목적지에 파일을 생성하는 스트림	
-			fos=new FileOutputStream(writeFile);
-			//큰 이미지 기록
-			while( (temp=fis.read(readData)) != -1 ) {
-			//파일에서 읽어들인 내용을 파일로 보낸다.
-				fos.write(readData, 0, temp);
-			}//end while
-			fos.flush();
-			if(fis!=null) {fis.close();}//end if
-			if(fos!=null) {fos.close();}//end if
-			readData = null;
+//			//파일에서 읽어 들이는 스트림.
+//			fis=new FileInputStream(readFile);
+//			//목적지에 파일을 생성하는 스트림	
+//			fos=new FileOutputStream(writeFile);
+//			//큰 이미지 기록
+//			while( (temp=fis.read(readData)) != -1 ) {
+//			//파일에서 읽어들인 내용을 파일로 보낸다.
+//				fos.write(readData, 0, temp);
+//			}//end while
+//			fos.flush();
+//			if(fis!=null) {fis.close();}//end if
+//			if(fos!=null) {fos.close();}//end if
+//			readData = null;
 				
 			fis=new FileInputStream(readFile);
 		    fos=new FileOutputStream(writeFile);
@@ -146,6 +248,9 @@ public class PcbAddPrdEvt implements ActionListener{
 		        fos.write(readData, 0, temp);
 		    }//end while
 		   fos.flush();
+		   
+		   if(fis!=null) {fis.close();}//end if
+		   if(fos!=null) {fos.close();}//end if
 									
 			//파일 등록이 제대로 되었다면 기본 이미지에서 올린 이미지로 미리보기 변경
 			JLabel lblTemp = papf.getLblMenuImg();
@@ -157,6 +262,7 @@ public class PcbAddPrdEvt implements ActionListener{
 			lblTemp.setIcon(finalImg);
 				
 			JOptionPane.showMessageDialog(papf, "이미지가 정상적으로 등록되었습니다.");
+			updateFlag=true;//이미지파일이 정상적으로 등록되었을때
 			
 		}//end if
 		
@@ -165,9 +271,19 @@ public class PcbAddPrdEvt implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource()==papf.getPrdOk()) {
+
+			if(flag) {
+				switch(JOptionPane.showConfirmDialog(papf, "상품을 수정 하시겠습니까?")) {
+				case JOptionPane.OK_OPTION:{
+					prdUpdate();
+					}
+				}//switch
+				return;
+			}//end if
+			
 			switch(JOptionPane.showConfirmDialog(papf, "상품을 추가 하시겠습니까?")) {
 			case JOptionPane.OK_OPTION:{
-					prdAdd();
+				prdAdd();
 				}
 			}//switch
 		}//end if
@@ -179,11 +295,6 @@ public class PcbAddPrdEvt implements ActionListener{
 				e.printStackTrace();
 			}
 		}//end if
-		if(ae.getSource()==papf.getJcbcate()) {
-			JComboBox<String> cb = papf.getJcbcate();
-			System.out.println(cb.getSelectedItem());
-		}//end if
-		
 		if(ae.getSource()==papf.getPrdCancle()) {
 			papf.dispose();
 		}//end if

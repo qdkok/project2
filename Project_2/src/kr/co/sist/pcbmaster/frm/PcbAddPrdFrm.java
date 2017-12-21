@@ -16,7 +16,7 @@ import kr.co.sist.pcbmaster.evt.PcbMasterMainEvt;
 @SuppressWarnings("serial")
 public class PcbAddPrdFrm extends JFrame {
    private PcbMasterMainEvt pmme;
-   private PcbSearchFrm pmmf;
+   private PcbMasterMainFrm pmmf;
    private ImageIcon img;
    private JLabel lblMenuImg;//선택된 이미지가 보여지는 Label
    private JTextField prdName,prdPrice;//상품명, 단가
@@ -24,7 +24,7 @@ public class PcbAddPrdFrm extends JFrame {
    private DefaultComboBoxModel<String> prdcate; //상품목록
    private JComboBox<String> jcbcate;//상품목록 탭 콤보박스
    
-   public PcbAddPrdFrm(PcbMasterMainEvt pmme, PcbSearchFrm pmmf, boolean flag) {
+   public PcbAddPrdFrm(PcbMasterMainEvt pmme, PcbMasterMainFrm pmmf, boolean flag) {
       super("상품추가");
       this.pmme = pmme;
       this.pmmf = pmmf;
@@ -89,10 +89,11 @@ public class PcbAddPrdFrm extends JFrame {
       setVisible(true);
       setBounds(50,50,500,750);
       
-      PcbAddPrdEvt pape = new PcbAddPrdEvt(this, pmme);
+      PcbAddPrdEvt pape = new PcbAddPrdEvt(this,this.pmmf,pmme,flag);
       prdOk.addActionListener(pape);
       prdAddImg.addActionListener(pape);
-      jcbcate.addActionListener(pape);
+      prdCancle.addActionListener(pape);
+      addWindowListener(pape);
       
       
    }//PcbPrdFrm
@@ -125,11 +126,20 @@ public PcbMasterMainEvt getPmme() {
       this.pmme=pmme;
    }
    
-   public PcbSearchFrm getPmmf() {
-      return pmmf;
-   }
    
-   public void viewImg() {
+   public PcbMasterMainFrm getPmmf() {
+	return pmmf;
+}
+
+public ImageIcon getImg() {
+	return img;
+}
+
+public DefaultComboBoxModel<String> getPrdcate() {
+	return prdcate;
+}
+
+public void viewImg() {
       
    }//viewImg
    

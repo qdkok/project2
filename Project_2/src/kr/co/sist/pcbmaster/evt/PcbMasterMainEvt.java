@@ -13,6 +13,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import jdk.nashorn.internal.scripts.JO;
 import kr.co.sist.pcbmaster.dao.PcbDAO;
 import kr.co.sist.pcbmaster.frm.PcbAddPrdFrm;
 import kr.co.sist.pcbmaster.frm.PcbMasterMainFrm;
@@ -69,30 +70,40 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		
 		//상품추가 버튼을 눌렀을 경우 이벤트 발생
 		if(ae.getSource()==pmmf.getBtnPrdAdd()) {
-			new PcbAddPrdFrm(this, null, false);
+			new PcbAddPrdFrm(this, pmmf, false);
 		}//end if
 		//상품수정 버튼을 눌렀을 경우 이벤트 발생
 		if(ae.getSource()==pmmf.getBtnPrdUpdate()) {
-			new PcbAddPrdFrm(this, null, true);
+				if(pmmf.gettPrdList().getSelectedRow()==-1) {
+					JOptionPane.showMessageDialog(pmmf, "수정할 상품을 선택해 주세요");
+					return;
+				}//end if
+				new PcbAddPrdFrm(this, pmmf, true);
 		}//end if
 		
 		if(ae.getSource()==pmmf.getBtnPrdDelete()) {
+			if(pmmf.gettPrdList().getSelectedRow()==-1) {
+				JOptionPane.showMessageDialog(pmmf, "삭제할 상품을 선택해 주세요");
+				return;
+			}//end if
 			delPrd();
 		}//end if
 		
 		if(ae.getSource()==pmmf.getBtnOrdCancle()) {
 			JTable jtTemp = pmmf.gettOrdList();
+			if(jtTemp.getSelectedRow()==-1) {
+				JOptionPane.showMessageDialog(pmmf, "취소할 주문을 선택해 주세요");
+				return;
+			}//end if
 			String ordNum = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 0);
 			ordCancle(ordNum);
 		}//end if
-		
 		
 
 	}// actionPerformed
 
 	@Override
 	public void run() {
-		
 		try {
 			while(true) {
 				Thread.sleep(1000 *60);
@@ -114,6 +125,11 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		switch (jtp.getSelectedIndex()) {
 			case SEATS_TAB: break;
 			case PRODUCT_TAB:{
+				switch (me.getClickCount()) {
+				case DOUBLE_CLICK:{
+						new PcbAddPrdFrm(this, pmmf, true);
+					}
+				}//switch
 				break;
 			}
 			
@@ -143,13 +159,15 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		try {
 			lss = p_dao.seats();
 			for(int i=0;i<seat.length;i++) {
+				seat[i].setText("좌석"+(i+1));
 				for(int j=0;j<lss.size();j++) {
 					flag=Integer.parseInt(lss.get(j).getSeatNum().substring(5));//좌석번호의 숫자와 자리비교후 같으면 ㄱㄱ
+					System.out.println(flag);
+					
 					if(flag==i) {
 						seat[i].setText("<html>좌석"+(i+1)+"<br>사용자 : "+lss.get(j).getId()+"<br>남은시간 : "+lss.get(j).getLeftTime()+"분");
 					}//end if
 				}//end for
-				
 			}//end for
 		} catch (SQLException e) {
 			System.out.println("좌석 호출 실패");
@@ -253,9 +271,6 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 
 	}// openServer
 
-	public void delPrdBtn() {
-
-	}// delPrdBtn
 
 	public void delPrd() {
 	PcbDAO p_dao = PcbDAO.getInstance();
