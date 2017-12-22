@@ -25,11 +25,13 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 	private SetUserVO suv;
 	private String seatNum;
 	Thread setting;
+	int flagnum;
 	
 	public PcbStatusEvt(PcbStatusFrm psf,PcbMasterMainFrm pmmf, PcbMasterMainEvt pmme,String seatNum,PcbMasterServer pms) {
 		super();
 		this.psf = psf;
 		this.pmme = pmme;
+		flagnum= Integer.parseInt(seatNum);//비회원 파악 플래그
 		this.seatNum="seat_"+ (seatNum.length()==1?"0"+seatNum:seatNum);
 		setUser(this.seatNum);
 		setting = new Thread(this);
@@ -137,7 +139,7 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 		case JOptionPane.OK_OPTION:		
 			PcbDAO p_dao=PcbDAO.getInstance();
 			try {
-				p_dao.addTime(new AddTimeVO(id, selTime));
+				p_dao.addTime(new AddTimeVO(id, selTime),pmme.getMemFlag()[flagnum]);
 				JOptionPane.showMessageDialog(psf, "시간추가 완료되었습니다.");
 				setUser(seatNum);//시간추가 새로고침
 			} catch (SQLException e) {
@@ -152,8 +154,9 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 	public void setUser(String seatNum) {
 		PcbDAO p_dao=PcbDAO.getInstance();
 		try {
-			suv=p_dao.setUser(seatNum);
-			psf.getLblId().setText("ID : "+suv.getId());
+			
+			suv=p_dao.setUser(seatNum,pmme.getMemFlag()[flagnum]);
+			psf.getLblId().setText("ID : "+ suv.getId());
 			psf.getLblName().setText("사용자명 : "+suv.getName());
 			psf.getLblTime().setText("남은시간 : "+suv.getLeftTime()+"분");
 		} catch (SQLException e) {

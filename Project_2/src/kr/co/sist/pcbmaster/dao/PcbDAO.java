@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import kr.co.sist.pcbmaster.vo.AddTimeVO;
 import kr.co.sist.pcbmaster.vo.PcbMasterLoginVO;
+import kr.co.sist.pcbmaster.vo.PcbNoMemVO;
 import kr.co.sist.pcbmaster.vo.PrdItemVO;
 import kr.co.sist.pcbmaster.vo.SearchIdVO;
 import kr.co.sist.pcbmaster.vo.SetOrdListVO;
@@ -93,6 +94,33 @@ public class PcbDAO {
 		return result;
 	}//masterLogin
 	
+	
+	public List<PcbNoMemVO> seatNoMem() throws SQLException {
+		List<PcbNoMemVO> noMemData=new ArrayList<PcbNoMemVO>();
+		
+		Connection con = null;
+		PreparedStatement pstmt= null;
+		ResultSet rs = null;
+		
+		try {
+			con=getConn();
+			String seat="select s.seats_num,n.nomem_id,n.left_time from NOMEMBER n, seats s where (n.nomem_id=s.NOMEM_ID) and login_status='Y'"; 
+			
+			pstmt=con.prepareStatement( seat );
+			rs=pstmt.executeQuery();   
+			
+			PcbNoMemVO pnm=null;
+			while(rs.next()) {
+				pnm = new PcbNoMemVO(rs.getString("nomem_id"), rs.getString("seats_num"), rs.getInt("left_time"));
+				noMemData.add(pnm);
+			}//while
+		}finally {
+			dbClose(con, pstmt, rs);
+		}//finally
+		
+		return noMemData;
+	}
+	
 	public List<SetSeatsVO> seats() throws SQLException{
 		List<SetSeatsVO> seatList=new ArrayList<SetSeatsVO>();
 		
@@ -118,7 +146,7 @@ public class PcbDAO {
 		return seatList;
 	}//seats
 	
-	public void addTime(AddTimeVO at) throws SQLException {
+	public void addTime(AddTimeVO at,boolean flag) throws SQLException {
 		
 		Connection con = null;
 		PreparedStatement pstmt= null;
@@ -126,7 +154,13 @@ public class PcbDAO {
 		
 		try {
 			con=getConn();
-			String ordDel="update member set left_time=left_time+? where mem_id=?"; 
+			String ordDel="";
+			if(!flag) {
+				ordDel="update member set left_time=left_time+? where mem_id=?"; 
+			}else {
+				//비회원일경우
+				ordDel="update nomember set left_time=left_time+? where nomem_id=?"; 
+			}//end if
 			
 			pstmt=con.prepareStatement( ordDel );
 			pstmt.setInt(1, at.getTime());//index 1번부터
@@ -148,14 +182,26 @@ public class PcbDAO {
 		
 		try {
 			con=getConn();
-			String serachID="select NAME, LEFT_TIME from member where mem_id=?"; 
+			String serachID="select name, left_time from member where mem_id=?"; 
 			pstmt=con.prepareStatement( serachID );
 			pstmt.setString(1, id);
 			rs=pstmt.executeQuery();     
 			
 			if(rs.next()) {
 				sid = new SearchIdVO(id, rs.getString("name"), rs.getInt("left_time"));
-			}//while
+				
+			}else {
+				pstmt.close();
+				rs.close();
+				serachID="select nomem_id, left_time from nomember where nomem_id=?"; 
+				pstmt=con.prepareStatement( serachID );
+				pstmt.setString(1, id);
+				rs=pstmt.executeQuery(); 
+				
+				if(rs.next()) {
+					sid = new SearchIdVO(id, rs.getString("nomem_id")+"(비회원)", rs.getInt("left_time"));
+				}//end if
+			}
 		}finally {
 			dbClose(con, pstmt, rs);
 		}//finally
@@ -389,7 +435,7 @@ public class PcbDAO {
 	///////////////삭제////////////////////
 	
 	
-	public SetUserVO setUser(String seatNum) throws SQLException {
+	public SetUserVO setUser(String seatNum,boolean flag) throws SQLException {
 		
 		
 		Connection con = null;
@@ -399,14 +445,29 @@ public class PcbDAO {
 		try {
 			con=getConn();
 			StringBuffer seat = new StringBuffer(); 
-			seat.append("select to_char(s.LOGIN_TIME,'yyyy-mm-dd hh:mm')login_time,m.mem_id,m.name,m.left_time")
+			
+			if(!flag) {
+				seat.append("select to_char(s.LOGIN_TIME,'yyyy-mm-dd hh:mm')login_time,m.mem_id,m.name,m.left_time")
 				.append(" from  seats s, member m").append(" where (s.mem_id=m.mem_id) and LOGIN_STATUS='Y' and s.seats_num=? "); 
-			pstmt=con.prepareStatement( seat.toString() );
-			pstmt.setString(1, seatNum);
-			rs=pstmt.executeQuery();                
-			if(rs.next()) {
-				su=new SetUserVO(rs.getString("mem_id"), rs.getString("name"),rs.getString("login_time"), rs.getInt("left_time"));
-			}//while
+				pstmt=con.prepareStatement( seat.toString() );
+				pstmt.setString(1, seatNum);
+				rs=pstmt.executeQuery();                
+				if(rs.next()) {
+					su=new SetUserVO(rs.getString("mem_id"), rs.getString("name"),rs.getString("login_time"), rs.getInt("left_time"));
+				}//while
+			}else {
+				seat.append("select to_char(s.LOGIN_TIME,'yyyy-mm-dd hh:mm')login_time, n.NOMEM_ID, n.LEFT_TIME")
+				.append(" from seats s, nomember n ").append("where (s.nomem_id=n.nomem_id) and LOGIN_STATUS='Y' and s.seats_num=? ");
+				
+				pstmt=con.prepareStatement( seat.toString() );
+				pstmt.setString(1, seatNum);
+				rs=pstmt.executeQuery();                
+				if(rs.next()) {
+					su=new SetUserVO(rs.getString("NOMEM_ID"), "비회원",rs.getString("login_time"), rs.getInt("left_time"));
+				}//while
+			}
+			
+			
 		}finally {
 			dbClose(con, pstmt, rs);
 		}//finally

@@ -25,8 +25,8 @@ public class PcbSearchFrm extends JDialog {
 		btnSearch= new JButton("검색");
 		btnAddTime = new JButton("시간추가");
 		searchId = new JTextField();
-		jlName = new JLabel("◎이름 : 김홍기");
-		jlTime = new JLabel("◎남은 시간 : 1:00");
+		jlName = new JLabel("◎이름 : ");
+		jlTime = new JLabel("◎남은 시간 : ");
 		
 		addTime=new DefaultComboBoxModel<>();
 		String[]time= new String[] {"1:00","2:00","3:00","4:00","5:00"};

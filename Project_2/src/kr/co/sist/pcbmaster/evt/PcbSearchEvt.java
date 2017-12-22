@@ -98,12 +98,18 @@ public class PcbSearchEvt implements ActionListener {
 		switch (JOptionPane.showConfirmDialog(psf, jsp)) {
 		case JOptionPane.OK_OPTION:		
 			PcbDAO p_dao=PcbDAO.getInstance();
+			boolean flag=false;
 			try {
-				p_dao.addTime(new AddTimeVO(id, selTime));
+				if(psf.getJlName().getText().contains("비회원")) {
+					flag=true;
+				}//end if
+				
+				p_dao.addTime(new AddTimeVO(id, selTime),flag);
 				JOptionPane.showMessageDialog(psf, "시간추가 완료되었습니다.");
 				psf.getJlName().setText("◎이름 : ");
 				psf.getJlTime().setText("◎남은 시간 : ");
 				id="";//아이디 초기화
+				
 			} catch (SQLException e) {
 				System.out.println("시간추가 도중 문제발생");
 				e.printStackTrace();
