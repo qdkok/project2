@@ -25,8 +25,8 @@ public class PcbMasterLoginEvt extends WindowAdapter implements ActionListener {
 		this.pmlf = pmlf;
 		
 		//관리자가 들어올 수 있는 아이디와 비밀번호,
-		admin = new HashMap<String,String>(2);
-		admin.put("1", "1");
+//		admin = new HashMap<String,String>(2);
+//		admin.put("1", "1");
 	}//PcbMasterLoginEvt
 
 	@Override
