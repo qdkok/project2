@@ -44,6 +44,8 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 		setPrdList();
 		setOrdList();
 		
+		new PcbMasterServer(pmmf, this);
+		
 		setting = new Thread(this);
 		setting.start();
 		

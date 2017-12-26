@@ -4,7 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
+import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,12 +39,26 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 	private int left_time ;
 	private PcbUserLoginFrm pulf;
 	private PcbUserDAO pu_dao = PcbUserDAO.getInstance();
+	Socket ss;
 	
 	public PcbStatusEvt(PcbStatusFrm psf,PcbUserLoginFrm pulf) {
 		this.psf = psf;
 		this.pulf = pulf;//회원 비회원 판단을 위해서
 
 		PcbUserDAO pu_dao=PcbUserDAO.getInstance();
+		
+		try {
+			ss=new Socket("211.63.89.149",Integer.parseInt("10000"));
+		} catch (NumberFormatException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		 id = pulf.getTfUserId().getText(); 
 			try {
@@ -152,8 +175,29 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 		};
 	}
 	
-	public void sendMsg() {
+	public void sendMsg() throws FileNotFoundException, IOException {
 		SendMsg = JOptionPane.showInputDialog("관리자에게 보낼 메시지를 적어주세요.");
+		
+		/*Properties prop=new Properties();
+		String path=System.getProperty("user.dir");//경로나옴
+		prop.load(new FileInputStream(path+"src/kr/co/sist/pcbclient/dao/database.properties"));
+		String serverIp=prop.getProperty("serverIp");
+		String serverPort=prop.getProperty("serverPort");
+		*/
+		Socket client=null;
+		DataInputStream dis=null;
+		DataOutputStream dos=null;
+		//FileOutputStream fos=null;
+		
+		client=ss;
+		dos=new DataOutputStream( client.getOutputStream() );
+		dis=new DataInputStream( client.getInputStream() );
+		dos.writeUTF(SendMsg);//서버로 파일명 보내기
+		
+		if(dis!=null) {dis.close();}//end if
+		if(dos!=null) {dos.close();}//end if
+		if(client!=null) {client.close();}//end if
+		
 	}
 
 	public void PcbOrdView() {
@@ -163,7 +207,15 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource()==psf.getBtnMsg()) {
-			sendMsg();
+			try {
+				sendMsg();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		if(ae.getSource()==psf.getBtnOrd()) {

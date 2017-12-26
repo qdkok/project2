@@ -34,6 +34,7 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 		flagnum= Integer.parseInt(seatNum);//비회원 파악 플래그
 		this.seatNum="seat_"+ (seatNum.length()==1?"0"+seatNum:seatNum);
 		setUser(this.seatNum);
+		
 		setting = new Thread(this);
 		setting.start();
 	}//PcbStatusEvt
