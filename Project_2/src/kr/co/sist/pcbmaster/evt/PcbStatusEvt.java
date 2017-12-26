@@ -151,8 +151,8 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 		
 		
 	}//addTime
-	
-	public void setUser(String seatNum) {
+	   
+	public void setUser(String seatNum) { 
 		PcbDAO p_dao=PcbDAO.getInstance();
 		try {
 			

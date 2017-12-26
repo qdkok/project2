@@ -174,7 +174,7 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 		String serverIp=prop.getProperty("serverIp");
 		String serverPort=prop.getProperty("serverPort");
 		*/
-		
+		  
 		try {
 			ss=new Socket("211.63.89.149",Integer.parseInt("10000"));
 		} catch (NumberFormatException e1) {

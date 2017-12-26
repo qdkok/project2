@@ -27,7 +27,7 @@ public class PcbMasterServer implements Runnable {
 	public PcbMasterServer(PcbMasterMainFrm pmmf, PcbMasterMainEvt pmme) {
 		super();
 		this.pmmf = pmmf;
-		this.pmme = pmme;
+		this.pmme = pmme;  
 		
 		serverport = new int[20];
 		int port=10000;
