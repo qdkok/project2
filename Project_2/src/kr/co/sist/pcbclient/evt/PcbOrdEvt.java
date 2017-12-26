@@ -228,7 +228,6 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 						
 						boolean numFlag = false;
 					
-						PcbOrderVO povo = new PcbOrderVO("",menu, quantity, price);
 						
 						OrderIdx += 1;
 						
@@ -256,7 +255,6 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 						int quantity = Integer.parseInt(JOptionPane.showInputDialog("주문하실 수량을 입력해주세요."));
 						int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
 						
-						PcbOrderVO povo = new PcbOrderVO("",menu, quantity, price);
 	
 						OrderIdx += 1;
 						
@@ -284,8 +282,7 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 						int quantity = Integer.parseInt(JOptionPane.showInputDialog("주문하실 수량을 입력해주세요."));
 						int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
 						
-						PcbOrderVO povo = new PcbOrderVO("",menu, quantity, price);
-						
+					
 						OrderIdx += 1;
 						
 						rowData[0] = OrderIdx;

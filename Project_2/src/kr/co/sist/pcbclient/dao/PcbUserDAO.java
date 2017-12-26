@@ -186,7 +186,22 @@ public class PcbUserDAO {
 		return 1;
 	}
 	
-	public void userOrder(List<PcbOrderVO> lsPovo) {
+	public void userOrder(List<PcbOrderVO> lsPovo) throws SQLException {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = getConn();
+			
+			String insertUser = "insert into orderlist(order_num, order_time, seats_num, prd_num, quantity, login_time) values()";
+			pstmt = con.prepareStatement(insertUser);
+			
+			
+			pstmt.executeUpdate();
+			
+		} finally {
+			dbClose(con, pstmt, null);
+		}
 		
 	}
 	
