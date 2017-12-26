@@ -39,7 +39,8 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 	private int left_time ;
 	private PcbUserLoginFrm pulf;
 	private PcbUserDAO pu_dao = PcbUserDAO.getInstance();
-	Socket ss;
+	private Socket ss;
+	private final static int MSG=0;
 	
 	public PcbStatusEvt(PcbStatusFrm psf,PcbUserLoginFrm pulf) {
 		this.psf = psf;
@@ -47,18 +48,7 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 
 		PcbUserDAO pu_dao=PcbUserDAO.getInstance();
 		
-		try {
-			ss=new Socket("211.63.89.149",Integer.parseInt("10000"));
-		} catch (NumberFormatException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		
 		
 		 id = pulf.getTfUserId().getText(); 
 			try {
@@ -184,6 +174,21 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 		String serverIp=prop.getProperty("serverIp");
 		String serverPort=prop.getProperty("serverPort");
 		*/
+		
+		try {
+			ss=new Socket("211.63.89.149",Integer.parseInt("10000"));
+		} catch (NumberFormatException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
 		Socket client=null;
 		DataInputStream dis=null;
 		DataOutputStream dos=null;
@@ -192,12 +197,13 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 		client=ss;
 		dos=new DataOutputStream( client.getOutputStream() );
 		dis=new DataInputStream( client.getInputStream() );
+		dos.writeInt(MSG);//서버로 파일명 보내기
 		dos.writeUTF(SendMsg);//서버로 파일명 보내기
 		
 		if(dis!=null) {dis.close();}//end if
 		if(dos!=null) {dos.close();}//end if
 		if(client!=null) {client.close();}//end if
-		
+	
 	}
 
 	public void PcbOrdView() {

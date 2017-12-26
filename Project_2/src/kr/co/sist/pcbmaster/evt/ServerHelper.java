@@ -11,11 +11,13 @@ import javax.swing.JButton;
 public class ServerHelper extends Thread {
 	private ServerSocket ss;
 	private Socket client;
-	
+	private PcbMasterServer cs;
 	private int port;
 	
+	private final static int MSG=0;
 	public ServerHelper(PcbMasterServer cs,int port) {
 		this.port=port;
+		this.cs=cs;
 	}//ServerHelper
 	public void run() {
 		try {
@@ -25,7 +27,18 @@ public class ServerHelper extends Thread {
 				client=ss.accept(); //다시 받으려면 while문을돌려야함
 				DataInputStream dis = null;
 				dis=new DataInputStream( client.getInputStream() );
-				System.out.println(dis.readUTF());
+				
+				switch (dis.readInt()) {
+				case MSG:
+					cs.takeMsg(dis.readUTF());
+					break;
+
+				default:
+					break;
+				}
+				
+				
+				if(dis!=null) {dis.close();}
 			}//end while
 			
 		} catch (IOException e) {

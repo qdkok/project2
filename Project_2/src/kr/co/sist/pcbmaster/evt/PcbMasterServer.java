@@ -58,23 +58,8 @@ public class PcbMasterServer implements Runnable {
 		
 	}//userLogin
 	
-	public void takeMsg(ServerSocket masterServer) throws IOException {
-		DataInputStream dis = null;
-		//DataOutputStream dos = null;
-		
-		String msg = "";
-		Socket client = null;
-		InetAddress ia = null;
-		
-		client = masterServer.accept();
-		ia = client.getInetAddress();
-		
-		dis = new DataInputStream(client.getInputStream());
-		msg = dis.readUTF();
-		System.out.println(ia+":"+msg);
-		
-		if (dis != null) {dis.close();} // end if
-		
+	public void takeMsg(String msg) throws IOException {
+		JOptionPane.showMessageDialog(pmmf, msg);
 	}//takeMsg
 	
 	public void takeFile() {
