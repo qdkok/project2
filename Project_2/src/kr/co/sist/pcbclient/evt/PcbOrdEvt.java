@@ -1,13 +1,15 @@
 package kr.co.sist.pcbclient.evt;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -24,7 +26,7 @@ import kr.co.sist.pcbclient.vo.PcbSetMenuVO;
 
 public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeListener {
 	private PcbOrdFrm pof;
-	private DefaultTableModel mOrder, tempMenu;
+	private DefaultTableModel dtmOrder, tempMenu;
 	private int totalPay = 0;
 	private int OrderIdx = 0;
 	public static final int DOUBLE_CLICK = 2;
@@ -44,7 +46,8 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 			Object[] rowData = null;
 			
 			PcbSetMenuVO psmv = null;
-			DecimalFormat df = new DecimalFormat("#,###");
+			String path="C:/dev/workspace/Project_2/src/kr/co/sist/pcbclient/img/";
+			File tempFile = null;
 			
 			for(int i=0; i< userAllMenu.size(); i++) {
 				psmv = userAllMenu.get(i);
@@ -52,7 +55,19 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 				rowData = new Object[4];
 				
 				rowData[0] = psmv.getPrdNum(); //상품명
-				rowData[1] = psmv.getPrdImg();
+				
+				tempFile = new File(psmv.getPrdImg());
+				if(!tempFile.exists()) {
+					//이미지가 없을 때 default 이미지를 띄우는 것으로 수정
+					JOptionPane.showMessageDialog(null, "이미지없음");
+				}
+				
+				ImageIcon img = new ImageIcon(psmv.getPrdImg());
+				Image originImg = img.getImage();
+				Image changeImg = originImg.getScaledInstance(200, 200,  java.awt.Image.SCALE_SMOOTH);
+				ImageIcon finalImg = new ImageIcon(changeImg);
+				
+				rowData[1] = finalImg;
 				rowData[2] = psmv.getPrdName();
 				rowData[3] = psmv.getPrice();
 				
@@ -77,7 +92,8 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 			Object[] rowData = null;
 			
 			PcbSetMenuVO psmv = null;
-			DecimalFormat df = new DecimalFormat("#,###");
+			String path="C:/dev/workspace/Project_2/src/kr/co/sist/pcbmgt/img/";
+			File tempFile = null;
 			
 			for(int i=0; i< userAllMenu.size(); i++) {
 				psmv = userAllMenu.get(i);
@@ -85,7 +101,18 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 				rowData = new Object[4];
 				
 				rowData[0] = psmv.getPrdNum(); //상품명
-				rowData[1] = psmv.getPrdImg();
+				
+				tempFile = new File(psmv.getPrdImg());
+				if(!tempFile.exists()) {
+					//이미지가 없을 때 default 이미지를 띄우는 것으로 수정
+					JOptionPane.showMessageDialog(null, "이미지없음");
+				}
+				ImageIcon img = new ImageIcon(psmv.getPrdImg());
+				Image originImg = img.getImage();
+				Image changeImg = originImg.getScaledInstance(200, 200,  java.awt.Image.SCALE_SMOOTH);
+				ImageIcon finalImg = new ImageIcon(changeImg);
+				
+				rowData[1] = finalImg;
 				rowData[2] = psmv.getPrdName();
 				rowData[3] = psmv.getPrice();
 				
@@ -102,22 +129,36 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 		DefaultTableModel tempMenu = pof.getDtmDrink();
 		PcbUserDAO pu_dao = PcbUserDAO.getInstance();
 		
-		try {
-			List<PcbSetMenuVO> userAllMenu3 = pu_dao.userAllMenu("음료");
+try {
+			
+			List<PcbSetMenuVO> userAllMenu = pu_dao.userAllMenu("음료");
 			tempMenu.setRowCount(0);
 			
 			Object[] rowData = null;
 			
 			PcbSetMenuVO psmv = null;
-			DecimalFormat df = new DecimalFormat("#,###");
+			String path="C:/dev/workspace/Project_2/src/kr/co/sist/pcbmgt/img/";
+			File tempFile = null;
 			
-			for(int i=0; i< userAllMenu3.size(); i++) {
-				psmv = userAllMenu3.get(i);
+			for(int i=0; i< userAllMenu.size(); i++) {
+				psmv = userAllMenu.get(i);
 				
 				rowData = new Object[4];
 				
 				rowData[0] = psmv.getPrdNum(); //상품명
-				rowData[1] = psmv.getPrdImg();
+				
+				tempFile = new File(psmv.getPrdImg());
+				if(!tempFile.exists()) {
+					//이미지가 없을 때 default 이미지를 띄우는 것으로 수정
+					JOptionPane.showMessageDialog(null, "이미지없음");
+				}
+				
+				ImageIcon img = new ImageIcon(psmv.getPrdImg());
+				Image originImg = img.getImage();
+				Image changeImg = originImg.getScaledInstance(200, 200,  java.awt.Image.SCALE_SMOOTH);
+				ImageIcon finalImg = new ImageIcon(changeImg);
+				
+				rowData[1] = finalImg;
 				rowData[2] = psmv.getPrdName();
 				rowData[3] = psmv.getPrice();
 				
@@ -132,7 +173,6 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 	
 	public void order() {
 		StringBuilder sbText = new StringBuilder();
-		JTable textTable = pof.getJtMenuList();
 		DefaultTableModel dtm = pof.getDtmOrder();
 		
 		sbText.append("\t\t주문 내역 확인").append("\n")
@@ -157,7 +197,6 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 		JScrollPane jspOrder = new JScrollPane(jtaOrder);
 		jtaOrder.setText(sbText.toString());
 		
-		JTable tempTbl = pof.getJtMenuList();
 		int rowCnt = pof.getDtmOrder().getRowCount();
 		int ordCnt = 0;
 			
@@ -214,6 +253,7 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 			JTabbedPane tempTab = pof.getJtMenubar();
 			Object[] rowData = null;
 			JTable tempTbl = null;
+			
 			rowData = new Object[4];
 			switch(tempTab.getSelectedIndex()) {
 			case 0:
@@ -223,7 +263,6 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 					String menu = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 2));
 					try {
 						int quantity = Integer.parseInt(JOptionPane.showInputDialog("주문하실 수량을 입력해주세요."));
-						
 						int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
 						
 						boolean numFlag = false;

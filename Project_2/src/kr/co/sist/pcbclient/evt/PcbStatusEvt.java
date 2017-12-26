@@ -26,16 +26,35 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 	private int addTime;
 	private int addHH = 0;
 	Thread timeThread;
+	private String id;
+	private int left_time ;
+	private PcbUserLoginFrm pulf;
+	private PcbUserDAO pu_dao = PcbUserDAO.getInstance();
 	
-	public PcbStatusEvt(PcbStatusFrm psf) {
+	public PcbStatusEvt(PcbStatusFrm psf,PcbUserLoginFrm pulf) {
 		this.psf = psf;
+		this.pulf = pulf;//회원 비회원 판단을 위해서
 
 		PcbUserDAO pu_dao=PcbUserDAO.getInstance();
-		 try {//상태불러오기
-				psf.getLblStarttime().setText(pu_dao.setUser());
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-		}
+		
+		 id = pulf.getTfUserId().getText(); 
+			try {
+				psf.getLblId().setText(pulf.getTfUserId().getText());//아이디 설정
+				psf.getLblStarttime().setText(pu_dao.setUser());//시작시간 설정
+
+				if(pulf.getCbMem().getState()){//회원 비회원 판단 후 남은시간 설정
+						left_time = pu_dao.userGetTime(id);
+				}else{
+						left_time = pu_dao.noUserGetTime(id);
+				}//else
+				
+				psf.getLblLefttime().setText(String.valueOf(left_time+" 분"));	
+				
+			} catch (SQLException e) {
+				//회원
+				e.printStackTrace();
+			}//try
+		 
 		
 		timeThread = new Thread(this);
 		timeThread.start(); ////////////////Thread
@@ -53,7 +72,7 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 		try {
 			pu_dao.logout(psf.getLblStarttime().getText());
 		} catch (SQLException se) {
-			JOptionPane.showMessageDialog(psf, "사용종류 중 문제발생");
+			JOptionPane.showMessageDialog(psf, "사용종료 중 문제발생");
 			se.printStackTrace();
 		}
 		timeThread.stop();
@@ -66,9 +85,9 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 	public void run() {
 		
 		////관리자에게 남은시간 받고 시간 -1 씩으로 수정
-		int sTime = (int)System.currentTimeMillis()/10;
+//		int sTime = (int)System.currentTimeMillis()/10;
 		
-		 while(true){ 
+		/* while(true){ 
              int cTime = (int)System.currentTimeMillis()/10; 
              int rTime = cTime - sTime; 
              int mm1 = rTime %100; 
@@ -76,17 +95,41 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
              int ss = mm % 60; 
              int MM = mm / 60 % 60; 
              int HH = mm / 3600; 
-             sb = (HH + addHH) + ":"+ MM +":"+ss+"."+mm1;
+             sb = (HH + addHH) + ":"+ MM +":"+ss+"."+mm1;*/
+		
+		while(true){ 
+            try { 
+            	if(left_time==0) {
+            		JOptionPane.showMessageDialog(psf, "사용시간이 모두 소모 되었습니다. \n충전하시려면 카운터에 문의해주세요.\n30초후 자동종료됩니다.");
+            		left_time=0;
+            		
+            		Thread.sleep(1000*30);
+            		psf.dispose();
+            		
+            	}//end if
+            	//시간이 있는지 물어본뒤
+            	//있다면 진행
+            	
+            	Thread.sleep(1000*60); 
+            	//시간감소 
+                 left_time = left_time - 1;
+                 psf.getLblLefttime().setText(String.valueOf(left_time+" 분"));
+                 
+                 
+                 if(pulf.getCbMem().getState()){
+						pu_dao.updateTime(id, left_time); // 회원 시간 업데이트
+				}else if( pulf.getCbNoMem().getState()) {
+						pu_dao.noUpdateTime(id, left_time); //비회원 시간 업데이트
+				}//end if else
+                 
+                 
+            } catch (InterruptedException e) {
+            	JOptionPane.showMessageDialog(null, "에러발생");
+            } catch (SQLException e) {
+				e.printStackTrace();
+			}
+		 }//while
              
-            
-             
-             psf.getLblLefttime().setText(sb);
-             try { 
-                  Thread.sleep(1000); 
-             } catch (InterruptedException e) {
-             	JOptionPane.showMessageDialog(null, "에러발생");
-             }
-        }
 	}//run
 	
 	public void setStatus() { //현재상태뿌리기
@@ -114,7 +157,7 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 	}
 
 	public void PcbOrdView() {
-		PcbOrdFrm pof = new PcbOrdFrm(psf);
+		new PcbOrdFrm(psf);
 	}
 	
 	@Override

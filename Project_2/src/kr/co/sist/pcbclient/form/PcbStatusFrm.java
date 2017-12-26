@@ -1,12 +1,8 @@
 package kr.co.sist.pcbclient.form;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
 import kr.co.sist.pcbclient.evt.PcbStatusEvt;
 
@@ -50,7 +46,7 @@ public class PcbStatusFrm extends JFrame {
 		add(btnMsg);
 		add(btnEnd);
 		
-		PcbStatusEvt pse = new PcbStatusEvt(this);
+		PcbStatusEvt pse = new PcbStatusEvt(this,pulf);
 		btnOrd.addActionListener(pse);
 		btnMsg.addActionListener(pse);
 		btnEnd.addActionListener(pse);

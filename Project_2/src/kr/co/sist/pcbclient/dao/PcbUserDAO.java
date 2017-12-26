@@ -108,8 +108,7 @@ public class PcbUserDAO {
 		try {
 			con = getConn();
 			
-			String insertUser = 
-					"insert into member(mem_id, pass, name, phone, email,  join_date) values(?,?,?,?,?,sysdate)";
+			String insertUser = "insert into member(mem_id, pass, name, phone, email,  join_date) values(?,?,?,?,?,sysdate)";
 			pstmt = con.prepareStatement(insertUser);
 			pstmt.setString(1, pujvo.getId());
 			pstmt.setString(2, pujvo.getPass());
@@ -133,7 +132,7 @@ public class PcbUserDAO {
 		try {
 			con = getConn();
 			String userLogin="";
-			if(id.length()>4) {
+			if(id.length()>=4) {
 				userLogin = "insert into seats(SEATS_NUM,LOGIN_TIME,LOGIN_STATUS,MEM_ID) values(SEAT_NUM(15),sysdate,'Y',?)";
 			}else {
 				userLogin = "insert into seats(SEATS_NUM,LOGIN_TIME,LOGIN_STATUS,NOMEM_ID) values(SEAT_NUM(15),sysdate,'Y',?)";
@@ -171,6 +170,7 @@ public class PcbUserDAO {
 			}//end if 아이디 체크
 			
 			
+			
 		} finally {
 			dbClose(con, pstmt, rs);
 		}
@@ -179,6 +179,7 @@ public class PcbUserDAO {
 	
 	public PcbStatusVO userStatus() {
 		PcbStatusVO psvo = new PcbStatusVO();
+		
 		return psvo;
 	}
 	
@@ -186,13 +187,35 @@ public class PcbUserDAO {
 		return 1;
 	}
 	
-	public void userOrder(List<PcbOrderVO> lsPovo) {
+	public void userOrder(List<PcbOrderVO> lsPovo) throws SQLException { //상품주문
 		
-	}
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = getConn();
+			
+			String insertUser = "insert into orderlist(order_num, order_time, seats_num, prd_num, quantity, login_time) values()";
+			pstmt = con.prepareStatement(insertUser);
+			
+			pstmt.setString(1, lsPovo.get(1).getPrdNum());
+			pstmt.setString(2, lsPovo.get(1).getPrdName());
+			pstmt.setInt(3, lsPovo.get(1).getQuantity());
+			pstmt.setInt(4,  lsPovo.get(1).getPrice());
+			
+			pstmt.executeUpdate();
+			
+		} finally {
+			dbClose(con, pstmt, null);
+		}
+		
+		
+	}//userOrder
+	
 	
 	public List<PcbSetMenuVO> userAllMenu(String TabName) throws SQLException{ //전체메뉴조회
 		List<PcbSetMenuVO> listMenu = new ArrayList<>();
-		PcbSetMenuVO psmvo = new PcbSetMenuVO();
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -299,5 +322,117 @@ public class PcbUserDAO {
 			dbClose(con, pstmt, rs);
 		}
 	}//logout
+	
+	
+	
+	////////////////////////회원 비회원 시간사용 및 시간 깔아주기////////////
+	public int userGetTime(String id) throws SQLException {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int leftTime = 0;
+		
+		try {
+			con = getConn();
+			
+			String userLogin = 
+					"select left_time from member where mem_id=?";
+			
+			pstmt = con.prepareStatement(userLogin);
+			pstmt.setString(1, id);
+			
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()) {
+				leftTime = rs.getInt("left_time");
+			}
+		} finally {
+			dbClose(con, pstmt, rs);
+		}
+		return leftTime;
+	}
+	
+	public int noUserGetTime(String id) throws SQLException {
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int leftTime = 0;
+		
+		try {
+			con = getConn();
+			
+			String userLogin = 
+					"select left_time from nomember where nomem_id=?";
+			
+			pstmt = con.prepareStatement(userLogin);
+			pstmt.setString(1, id);
+			
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()) {
+				leftTime = rs.getInt("left_time");
+			}
+		} finally {
+			dbClose(con, pstmt, rs);
+		}
+		return leftTime;
+	}
+	
+	public boolean updateTime(String id, int left_time) throws SQLException{
+		boolean flag = false;
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = getConn();
+			
+			String updateStatus = "update member set left_time=? where mem_id=?";
+			pstmt = con.prepareStatement(updateStatus);
+			
+			pstmt.setInt(1, left_time);
+			pstmt.setString(2, id);
+			
+			int cnt = pstmt.executeUpdate();
+			
+			if(cnt == 1) {
+				flag = true;
+			}
+			
+		}finally {
+			dbClose(con, pstmt, null);
+		}
+		
+		return flag;
+	}//updateTime
+	
+	public boolean noUpdateTime(String id, int left_time) throws SQLException{
+		boolean flag = false;
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = getConn();
+			
+			String updateStatus = "update nomember set left_time=? where nomem_id=?";
+			pstmt = con.prepareStatement(updateStatus);
+			
+			pstmt.setInt(1, left_time);
+			pstmt.setString(2, id);
+			
+			int cnt = pstmt.executeUpdate();
+			
+			if(cnt == 1) {
+				flag = true;
+			}
+			
+		}finally {
+			dbClose(con, pstmt, null);
+		}
+		
+		return flag;
+	}//updateTime
+	
 	
 }
