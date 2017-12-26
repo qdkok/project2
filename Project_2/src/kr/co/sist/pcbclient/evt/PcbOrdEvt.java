@@ -7,6 +7,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -21,17 +22,20 @@ import javax.swing.table.DefaultTableModel;
 
 import kr.co.sist.pcbclient.dao.PcbUserDAO;
 import kr.co.sist.pcbclient.form.PcbOrdFrm;
+import kr.co.sist.pcbclient.form.PcbStatusFrm;
 import kr.co.sist.pcbclient.vo.PcbOrderVO;
 import kr.co.sist.pcbclient.vo.PcbSetMenuVO;
 
 public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeListener {
 	private PcbOrdFrm pof;
+	private PcbStatusFrm psf;
 	private DefaultTableModel dtmOrder, tempMenu;
 	private int totalPay = 0;
-	private int OrderIdx = 0;
 	public static final int DOUBLE_CLICK = 2;
-	public PcbOrdEvt(PcbOrdFrm pof) {
+	
+	public PcbOrdEvt(PcbOrdFrm pof,PcbStatusFrm psf) {
 		this.pof = pof;
+		this.psf = psf;
 		setListRamen();
 	}
 	
@@ -174,7 +178,7 @@ try {
 	public void order() {
 		StringBuilder sbText = new StringBuilder();
 		DefaultTableModel dtm = pof.getDtmOrder();
-		
+		List<PcbOrderVO> lpo = new ArrayList<PcbOrderVO>();// db로 보낼 리스트
 		sbText.append("\t\t주문 내역 확인").append("\n")
 			.append("--------------------------------------------------------------------------------------------------------------\n")
 			.append("\t메뉴\t수량\t가격").append("\n")
@@ -184,6 +188,8 @@ try {
 			for(int j=1; j<pof.getJtMenuList().getColumnCount(); j++) {
 				sbText.append("\t").append(dtm.getValueAt(i, j));
 			}
+			//좌석번호 //로그인시간 //상품번호 //수량
+			lpo.add(new PcbOrderVO("seat_15", psf.getLblStarttime().getText(), dtm.getValueAt(i, 0)+"", Integer.parseInt(dtm.getValueAt(i, 2)+"")) ) ;
 			sbText.append("\n");
 		}
 		
@@ -207,6 +213,16 @@ try {
 		switch(JOptionPane.showConfirmDialog(pof, jspOrder)) {
 		case JOptionPane.OK_OPTION:
 			for(int i=0; i<(rowCnt+ordCnt); i++) {
+				PcbUserDAO pu_dao = PcbUserDAO.getInstance();
+				try {
+					pu_dao.userOrder(lpo);
+				} catch (NullPointerException e) {
+					JOptionPane.showMessageDialog(pof, "주문할 항목이 없습니다.");
+					e.printStackTrace();
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(pof, "주문 도중 문제가 발생했습니다.");
+					e.printStackTrace();
+				}
 				pof.getDtmOrder().removeRow(0);
 			}
 			totalPay = 0;
@@ -223,11 +239,9 @@ try {
 	public void delBasket() {
 		JTable tempTbl = pof.getJtMenuList();
 		int removePay = (int) tempTbl.getValueAt(tempTbl.getSelectedRow(), 3);
-		int removeIdx = 1;
 		switch(JOptionPane.showConfirmDialog(pof, "장바구니에서 해당 품목을 삭제하시겠습니까?")) {
 		case JOptionPane.OK_OPTION:
 			totalPay -= removePay;
-			OrderIdx -= removeIdx;
 			pof.getLblPay().setText(String.valueOf(totalPay));
 			pof.getDtmOrder().removeRow(tempTbl.getSelectedRow());
 		}
@@ -260,18 +274,15 @@ try {
 				switch(me.getClickCount()) {
 				case DOUBLE_CLICK:
 					tempTbl = pof.getJtMenuList_r();
+					String menuNum = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 0));
 					String menu = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 2));
 					try {
 						int quantity = Integer.parseInt(JOptionPane.showInputDialog("주문하실 수량을 입력해주세요."));
 						int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
 						
-						boolean numFlag = false;
-					
-						PcbOrderVO povo = new PcbOrderVO("",menu, quantity, price);
 						
-						OrderIdx += 1;
 						
-						rowData[0] = OrderIdx;
+						rowData[0] = menuNum;
 						rowData[1] = menu;
 						rowData[2] = quantity;
 						rowData[3] = quantity*price;
@@ -290,16 +301,16 @@ try {
 				switch(me.getClickCount()) {
 				case DOUBLE_CLICK:
 					tempTbl = pof.getJtMenuList_s();
+					String menuNum = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 0));
 					String menu = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 2));
 					try {
 						int quantity = Integer.parseInt(JOptionPane.showInputDialog("주문하실 수량을 입력해주세요."));
 						int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
 						
-						PcbOrderVO povo = new PcbOrderVO("",menu, quantity, price);
-	
-						OrderIdx += 1;
 						
-						rowData[0] = OrderIdx;
+	
+						
+						rowData[0] = menuNum;
 						rowData[1] = menu;
 						rowData[2] = quantity;
 						rowData[3] = quantity*price;
@@ -318,16 +329,14 @@ try {
 				switch(me.getClickCount()) {
 				case DOUBLE_CLICK:
 					tempTbl = pof.getJtMenuList_d();
+					String menuNum = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 0));
 					String menu = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 2));
 					try {
 						int quantity = Integer.parseInt(JOptionPane.showInputDialog("주문하실 수량을 입력해주세요."));
 						int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
 						
-						PcbOrderVO povo = new PcbOrderVO("",menu, quantity, price);
 						
-						OrderIdx += 1;
-						
-						rowData[0] = OrderIdx;
+						rowData[0] = menuNum;
 						rowData[1] = menu;
 						rowData[2] = quantity;
 						rowData[3] = quantity*price;

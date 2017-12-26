@@ -242,7 +242,7 @@ public class PcbDAO {
 			//2.커넥션 얻기
 			con=getConn();
 			//3.쿼리문 생성 객체 얻기
-			String listord="select o.order_num,o.seats_num,p.prd_name,o.quantity,p.price*o.quantity price,o.status,to_char(o.order_time,'yyyy-mm-dd hh:mm') order_time from  orderlist o,product p where (o.prd_num=p.prd_num) order by order_time"; 
+			String listord="select o.order_num,o.seats_num,p.prd_name,o.quantity,p.price*o.quantity price,o.status,to_char(o.order_time,'yyyy-mm-dd hh:mm') order_time from  orderlist o,product p where (o.prd_num=p.prd_num) order by order_time desc"; 
 			
 			pstmt=con.prepareStatement( listord );
 			//4.쿼리문 수행 후 결과 얻기
@@ -309,7 +309,7 @@ public class PcbDAO {
 		
 		try {
 			con=getConn();
-			String listprd="select prd_num, prd_name, price, category, to_char(input_date,'yyyy-mm-dd hh:MM')input_date from product order by input_date"; 
+			String listprd="select prd_num, prd_name, price, category, to_char(input_date,'yyyy-mm-dd hh:MM')input_date from product order by input_date desc" ; 
 			
 			pstmt=con.prepareStatement( listprd );
 			rs=pstmt.executeQuery();                

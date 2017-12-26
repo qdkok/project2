@@ -32,7 +32,6 @@ public class PcbOrdFrm extends JDialog{
 		setLayout(null);
 		
 		////////////////////////////Ramen MenuItem form////////////////////////////
-		JPanel jpRamen = new JPanel();
 		
 		String[] columnName_r = {"상품코드" , "상품이미지" , "상품명", "상품가격"};
 		String[][] rowData_r = new String[10][4];
@@ -62,7 +61,6 @@ public class PcbOrdFrm extends JDialog{
 		////////////////////////////Ramen MenuItem form////////////////////////////
 		
 		////////////////////////////cookie MenuItem form////////////////////////////
-		JPanel jpSnack = new JPanel();
 		
 		String[] columnName_s = {"상품코드" , "상품이미지" , "상품명", "상품가격"};
 		String[][] rowData_s = new String[10][4];
@@ -93,7 +91,6 @@ public class PcbOrdFrm extends JDialog{
 		////////////////////////////snack MenuItem form////////////////////////////
 		
 		////////////////////////////drink MenuItem form////////////////////////////
-		JPanel jpDrink = new JPanel();
 		
 		String[] columnName_d = {"상품코드" , "상품이미지" , "상품명", "상품가격"};
 		String[][] rowData_d = new String[10][4];
@@ -129,7 +126,7 @@ public class PcbOrdFrm extends JDialog{
 		jtMenubar.add("음료", jspMenuList_d);
 		
 		////////////////////////////OrderList Table form////////////////////////////
-		String[] columnName = {"No.", "메뉴" , "수량" , "가격"};
+		String[] columnName = {"상품코드", "메뉴" , "수량" , "가격"};
 		String[][] rowData = {};
 				
 		dtmOrder = new DefaultTableModel(rowData, columnName);
@@ -146,7 +143,7 @@ public class PcbOrdFrm extends JDialog{
 			}//getcolumnClass
 		};
 		
-		jtMenuList.getColumnModel().getColumn(0).setPreferredWidth(50); //상품명
+		jtMenuList.getColumnModel().getColumn(0).setPreferredWidth(70); //상품명
 		jtMenuList.getColumnModel().getColumn(1).setPreferredWidth(200); //상품명
 		jtMenuList.getColumnModel().getColumn(2).setPreferredWidth(155); //상품수량
 		jtMenuList.getColumnModel().getColumn(3).setPreferredWidth(150); //상품가격
@@ -185,7 +182,7 @@ public class PcbOrdFrm extends JDialog{
 		add(lblPay);
 		add(OrderInfoMsg);
 		
-		PcbOrdEvt poe = new PcbOrdEvt(this);
+		PcbOrdEvt poe = new PcbOrdEvt(this,psf);
 		jtMenuList.addMouseListener(poe);
 		jtMenuList_r.addMouseListener(poe);
 		jtMenuList_s.addMouseListener(poe);

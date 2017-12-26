@@ -148,27 +148,43 @@ public class PcbUserDAO {
 	}
 	
 	
-	public boolean userLogin(PcbUserLoginFrm pulf) throws SQLException {//아이디 비밀번호 체크 
+	public String userLogin(PcbUserLoginFrm pulf) throws SQLException {//아이디 비밀번호 체크 
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		boolean loginFlag = false;
+		String loginFlag = "N";
+		String id = pulf.getTfUserId().getText();
 		
 		try {
 			con = getConn();
 			
-			String userLogin = "select mem_id, pass from member where mem_id=? and pass=?";
+			String userLogin = "select pass from member where mem_id=?";
 			
 			pstmt = con.prepareStatement(userLogin);
 			pstmt.setString(1, pulf.getTfUserId().getText());
-			pstmt.setString(2, new String(pulf.getTfUserPass().getPassword()));
 			
 			rs=pstmt.executeQuery();
 			
 			if(rs.next()) {
-				loginFlag = true;
+				if(rs.getString("pass").equals(new String(pulf.getTfUserPass().getPassword()) )) {
+					loginFlag = "Y";
+					return loginFlag;
+				}//end if
 			}//end if 아이디 체크
 			
+			dbClose(null, pstmt, rs);
+			
+			String usingID = "select seats_num, login_status, mem_id from seats where mem_id=? and login_status='Y'";
+			
+			pstmt = con.prepareStatement(usingID);
+			pstmt.setString(1, id);
+			
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()) {
+				loginFlag = "L";
+				return loginFlag;
+			}
 			
 			
 		} finally {
@@ -187,24 +203,24 @@ public class PcbUserDAO {
 		return 1;
 	}
 	
-	public void userOrder(List<PcbOrderVO> lsPovo) throws SQLException { //상품주문
-		
+	public void userOrder(List<PcbOrderVO> lsPovo) throws SQLException,NullPointerException { //상품주문
 		
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		
 		try {
 			con = getConn();
-			
-			String insertUser = "insert into orderlist(order_num, order_time, seats_num, prd_num, quantity, login_time) values()";
-			pstmt = con.prepareStatement(insertUser);
-			
-			pstmt.setString(1, lsPovo.get(1).getPrdNum());
-			pstmt.setString(2, lsPovo.get(1).getPrdName());
-			pstmt.setInt(3, lsPovo.get(1).getQuantity());
-			pstmt.setInt(4,  lsPovo.get(1).getPrice());
-			
-			pstmt.executeUpdate();
+			for(int i=0;i<lsPovo.size();i++) {
+				String insertUser = "insert into orderlist(order_num, order_time, seats_num, prd_num, quantity, login_time) values(ord_num(),sysdate,?,?,?,(select LOGIN_TIME from SEATS where LOGIN_STATUS='Y' and SEATS_NUM=?))";
+				pstmt = con.prepareStatement(insertUser);
+				
+				pstmt.setString(1, lsPovo.get(i).getSeatNum());
+				pstmt.setString(2, lsPovo.get(i).getPrdNum());
+				pstmt.setInt(3, lsPovo.get(i).getQuantity());
+				pstmt.setString(4, lsPovo.get(i).getSeatNum());
+				
+				pstmt.executeUpdate();
+			}
 			
 		} finally {
 			dbClose(con, pstmt, null);
@@ -245,26 +261,45 @@ public class PcbUserDAO {
 		return listMenu;
 	}
 	
-	public boolean noUserLogin(PcbUserLoginFrm pulf) throws SQLException {
+	public String noUserLogin(PcbUserLoginFrm pulf) throws SQLException {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		boolean loginFlag = false;
+		String noMem_Id = pulf.getTfUserId().getText();
+		String loginFlag = "N";
 		
 		try {
 			con = getConn();
 			
 			String noUserLogin = 
-					"select nomem_id, left_time from NOMEMBER where nomem_id=?";
+					"select left_time from NOMEMBER where nomem_id=?";
 			
 			pstmt = con.prepareStatement(noUserLogin);
-			pstmt.setString(1, pulf.getTfUserId().getText());
+			pstmt.setString(1, noMem_Id);
 			
 			rs=pstmt.executeQuery();
 			
 			if(rs.next()) {
-				loginFlag = true;
+				loginFlag = "Y";
+			}else {
+				return loginFlag;
+			}//end else
+			
+			dbClose(null, pstmt, rs);
+			
+			String usingID = "select seats_num from seats where nomem_id=? and login_status='Y'";
+//			String noNum = "004";
+			pstmt = con.prepareStatement(usingID);
+//			pstmt.setString(1, noNum);
+			pstmt.setString(1, noMem_Id);
+			
+			rs=pstmt.executeQuery();
+			
+			if(rs.next()) {
+				loginFlag = "L";
+				return loginFlag;
 			}
+			
 		} finally {
 			dbClose(con, pstmt, rs);
 		}

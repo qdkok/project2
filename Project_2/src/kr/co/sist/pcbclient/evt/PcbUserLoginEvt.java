@@ -45,27 +45,48 @@ public class PcbUserLoginEvt implements ActionListener, ItemListener {
 	}
 
 	public void login() throws SQLException {
-		PcbUserDAO pu_dao = new PcbUserDAO();
+		PcbUserDAO pu_dao = PcbUserDAO.getInstance();
 	
 		String id = pulf.getTfUserId().getText();
 		String password = new String(pulf.getTfUserPass().getPassword());
 		
 		if(pulf.getCbMem().getState()==true && !id.equals("") && !password.equals("")) { //회원 체크할경우 
-				if(pu_dao.userLogin(pulf)) {
-					pu_dao.useSeats(pulf.getTfUserId().getText());
-					new PcbStatusFrm(pulf);
-					pulf.dispose();
-				}else {
+			
+				if(pu_dao.userLogin(pulf).equals("N")) {
 					JOptionPane.showMessageDialog(pulf, "아이디나 비밀번호가 틀립니다.");
-				}//end else
+					return;
+				}//end if
+				
+				if(pu_dao.userLogin(pulf).equals("L")) {
+					JOptionPane.showMessageDialog(pulf, "이미 사용중인 아이디 입니다.");
+					return;
+				}//end if
+				
+				if(pu_dao.userGetTime(id) == 0) {
+					JOptionPane.showMessageDialog(pulf, "가지고 계신 시간이 없습니다. 카운터에 문의하여 충전해주세요.");
+					return;
+				}//end if
+				
+				pu_dao.useSeats(pulf.getTfUserId().getText());
+				new PcbStatusFrm(pulf);
+				pulf.dispose();
 		}else if(pulf.getCbNoMem().getState() == true && !id.equals("") ){ //비회원 체크할경우
-				if(pu_dao.noUserLogin(pulf)) {
-					pu_dao.useSeats(pulf.getTfUserId().getText());
-					new PcbStatusFrm(pulf);
-					pulf.dispose();
-				}else {
+				if(pu_dao.noUserLogin(pulf).equals("N")) {
 					JOptionPane.showMessageDialog(pulf, "비회원번호를 확인해주세요.");
-				}//end else
+					return;
+				}//end if
+				if(pu_dao.noUserLogin(pulf).equals("L")) {
+					JOptionPane.showMessageDialog(pulf, "이미 사용중인 아이디 입니다.");
+					return;
+				}//end if
+				if(pu_dao.noUserGetTime(id) == 0) {
+					JOptionPane.showMessageDialog(pulf, "가지고 계신 시간이 없습니다. 카운터에 문의하여 충전해주세요.");
+					return;
+				}//end if
+				
+				pu_dao.useSeats(pulf.getTfUserId().getText());
+				new PcbStatusFrm(pulf);
+				pulf.dispose();
 		}else {
 			JOptionPane.showMessageDialog(pulf, "아이디와 비밀번호를 입력해주세요.");
 		}

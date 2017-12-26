@@ -1,51 +1,39 @@
 package kr.co.sist.pcbclient.vo;
 
-public class PcbOrderVO {
-	private String prdNum, prdName;
-	private int quantity, price;
-	
-	public PcbOrderVO() {
-	}
-
-	public PcbOrderVO(String prdNum, String prdName, int quantity, int price) {
+public class PcbOrderVO {//좌석번호 //로그인시간 //상품번호 //수량
+	private String seatNum, loginTime, prdNum;
+	private int quantity;
+	public PcbOrderVO(String seatNum, String loginTime, String prdNum, int quantity) {
+		super();
+		this.seatNum = seatNum;
+		this.loginTime = loginTime;
 		this.prdNum = prdNum;
-		this.prdName = prdName;
 		this.quantity = quantity;
-		this.price = price;
 	}
-
+	public String getSeatNum() {
+		return seatNum;
+	}
+	public void setSeatNum(String seatNum) {
+		this.seatNum = seatNum;
+	}
+	public String getLoginTime() {
+		return loginTime;
+	}
+	public void setLoginTime(String loginTime) {
+		this.loginTime = loginTime;
+	}
 	public String getPrdNum() {
 		return prdNum;
 	}
-
 	public void setPrdNum(String prdNum) {
 		this.prdNum = prdNum;
 	}
-
-	public String getPrdName() {
-		return prdName;
-	}
-
-	public void setPrdName(String prdName) {
-		this.prdName = prdName;
-	}
-
 	public int getQuantity() {
 		return quantity;
 	}
-
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-
-	public int getPrice() {
-		return price;
-	}
-
-	public void setPrice(int price) {
-		this.price = price;
-	}
-
 	
 	
 }
