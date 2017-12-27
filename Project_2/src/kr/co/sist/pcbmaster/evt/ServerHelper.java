@@ -15,6 +15,9 @@ public class ServerHelper extends Thread {
 	private int port;
 	
 	private final static int MSG=0;
+	private final static int START=1;
+	private final static int END=2;
+	private final static int ORDER=3;
 	public ServerHelper(PcbMasterServer cs,int port) {
 		this.port=port;
 		this.cs=cs;
@@ -32,10 +35,15 @@ public class ServerHelper extends Thread {
 				case MSG:
 					cs.takeMsg(dis.readUTF());
 					break;
-
-				default:
+				case START:
+					cs.userLogin();
 					break;
-				}
+				case END:
+					cs.takeUseEnd();
+					break;
+				case ORDER:
+					cs.takeOrder();
+				}//end switch
 				
 				
 				if(dis!=null) {dis.close();}

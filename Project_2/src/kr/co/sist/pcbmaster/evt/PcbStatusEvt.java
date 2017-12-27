@@ -4,9 +4,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.Socket;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
@@ -27,6 +33,14 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 	Thread setting;
 	int flagnum;
 	
+	private Properties prop;
+	private int socketPort;
+	private String userIp;
+	
+	private final static int MSG=0;
+	private final static int END=1;
+	private final static int ADDTIME=2;
+	
 	public PcbStatusEvt(PcbStatusFrm psf,PcbMasterMainFrm pmmf, PcbMasterMainEvt pmme,String seatNum,PcbMasterServer pms) {
 		super();
 		this.psf = psf;
@@ -34,6 +48,20 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 		flagnum= Integer.parseInt(seatNum);//비회원 파악 플래그
 		this.seatNum="seat_"+ (seatNum.length()==1?"0"+seatNum:seatNum);
 		setUser(this.seatNum);
+		
+		
+		try {
+			prop = new Properties();
+			prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));
+			socketPort=Integer.parseInt(prop.getProperty("socketPort"))+Integer.parseInt(seatNum);
+			userIp=prop.getProperty("userIp");
+			
+			//서버에 시작을 알리기위해
+
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(psf, "서버연결중 문제발생.");
+			e1.printStackTrace();
+		}//catch
 		
 		setting = new Thread(this);
 		setting.start();
@@ -45,10 +73,43 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 		if(ae.getSource()==psf.getAddTime()) {//시간추가 버튼을 클릭했을 때
 			addTime(suv.getId());
 			pmme.setSeats();//시간추가 새로고침
+			
+			//새로고침해달라고 요청
+			try {
+			Socket client=new Socket(userIp,socketPort);
+			DataOutputStream dos=null;
+			
+			dos=new DataOutputStream( client.getOutputStream() );
+				dos.writeInt(ADDTIME);
+			
+			if(dos!=null) {dos.close();}//end if
+			if(client!=null) {client.close();}//end if
+			
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}//end if
 		
 		if(ae.getSource()==psf.getSendMsg()) { //메시지 보내기 버튼을 클릭했을 때
-			JOptionPane.showInputDialog("보낼 메시지를 입력하세요.");
+			String msg=JOptionPane.showInputDialog("보낼 메시지를 입력하세요.");
+			//메시지 전달
+			try {
+				System.out.println(userIp);
+				System.out.println(socketPort);
+				Socket client=new Socket(userIp,socketPort);
+				DataOutputStream dos=null;
+				
+				dos=new DataOutputStream( client.getOutputStream() );
+				dos.writeInt(MSG);
+				dos.writeUTF(msg);
+				
+				if(dos!=null) {dos.close();}//end if
+				if(client!=null) {client.close();}//end if
+				
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 		}//end if
 		
 		if(ae.getSource()==psf.getUseEnd()) { //사용종료 버튼을 클릭했을 때
@@ -56,7 +117,25 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 				case JOptionPane.OK_OPTION:
 					stopUser();
 					pmme.setSeats();
+					
+					//종료요청
+					try {
+						Socket client=new Socket(userIp,socketPort);
+						DataOutputStream dos=null;
+						
+						dos=new DataOutputStream( client.getOutputStream() );
+						dos.writeInt(END);
+						
+						if(dos!=null) {dos.close();}//end if
+						if(client!=null) {client.close();}//end if
+						
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					
 					psf.dispose();
+					
 			}//end switch
 		}//end if
 		

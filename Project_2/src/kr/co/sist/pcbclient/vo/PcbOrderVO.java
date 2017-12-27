@@ -1,20 +1,13 @@
 package kr.co.sist.pcbclient.vo;
 
 public class PcbOrderVO {//좌석번호 //로그인시간 //상품번호 //수량
-	private String seatNum, loginTime, prdNum;
+	private String loginTime, prdNum;
 	private int quantity;
-	public PcbOrderVO(String seatNum, String loginTime, String prdNum, int quantity) {
+	public PcbOrderVO(String loginTime, String prdNum, int quantity) {
 		super();
-		this.seatNum = seatNum;
 		this.loginTime = loginTime;
 		this.prdNum = prdNum;
 		this.quantity = quantity;
-	}
-	public String getSeatNum() {
-		return seatNum;
-	}
-	public void setSeatNum(String seatNum) {
-		this.seatNum = seatNum;
 	}
 	public String getLoginTime() {
 		return loginTime;
@@ -34,6 +27,7 @@ public class PcbOrderVO {//좌석번호 //로그인시간 //상품번호 //수량
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+	
 	
 	
 }

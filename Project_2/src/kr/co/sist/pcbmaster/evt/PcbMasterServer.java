@@ -1,14 +1,9 @@
 package kr.co.sist.pcbmaster.evt;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import kr.co.sist.pcbclient.form.PcbStatusFrm;
@@ -44,18 +39,15 @@ public class PcbMasterServer implements Runnable {
 
 	@Override
 	public void run() {
-		
-				for(int i=0 ; i < serverport.length ; i++) {
-					ServerHelper sh=new ServerHelper(this,serverport[i]);
-					listServer.add(sh);
-					sh.start();
-				}
-				
-			
+		for(int i=0 ; i < serverport.length ; i++) {
+			ServerHelper sh=new ServerHelper(this,serverport[i]);
+			listServer.add(sh);
+			sh.start();
+		}
 	}//run
 	
-	public void userLogin() {
-		
+	public void userLogin() {//유저로그인
+		pmme.setSeats();
 	}//userLogin
 	
 	public void takeMsg(String msg) throws IOException {
@@ -66,12 +58,12 @@ public class PcbMasterServer implements Runnable {
 		
 	}//takeFime
 	
-	public void takeUseEnd() {
-		
+	public void takeUseEnd() {//사용종료
+		pmme.setSeats();
 	}//takeUseEnd
 	
 	public void takeOrder() {
-		
+		pmme.setOrdList();
 	}//takeOrder
 	
 	public void sendFile() {

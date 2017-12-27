@@ -5,10 +5,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -19,6 +25,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
+
 
 import kr.co.sist.pcbclient.dao.PcbUserDAO;
 import kr.co.sist.pcbclient.form.PcbOrdFrm;
@@ -32,6 +39,7 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 	private DefaultTableModel dtmOrder, tempMenu;
 	private int totalPay = 0;
 	public static final int DOUBLE_CLICK = 2;
+	private static final int ORDER=3;
 	
 	public PcbOrdEvt(PcbOrdFrm pof,PcbStatusFrm psf) {
 		this.pof = pof;
@@ -189,7 +197,7 @@ try {
 				sbText.append("\t").append(dtm.getValueAt(i, j));
 			}
 			//좌석번호 //로그인시간 //상품번호 //수량
-			lpo.add(new PcbOrderVO("seat_15", psf.getLblStarttime().getText(), dtm.getValueAt(i, 0)+"", Integer.parseInt(dtm.getValueAt(i, 2)+"")) ) ;
+			lpo.add(new PcbOrderVO(psf.getLblStarttime().getText(), dtm.getValueAt(i, 0)+"", Integer.parseInt(dtm.getValueAt(i, 2)+"")) ) ;
 			sbText.append("\n");
 		}
 		
@@ -212,8 +220,8 @@ try {
 		
 		switch(JOptionPane.showConfirmDialog(pof, jspOrder)) {
 		case JOptionPane.OK_OPTION:
+			PcbUserDAO pu_dao = PcbUserDAO.getInstance();
 			for(int i=0; i<(rowCnt+ordCnt); i++) {
-				PcbUserDAO pu_dao = PcbUserDAO.getInstance();
 				try {
 					pu_dao.userOrder(lpo);
 				} catch (NullPointerException e) {
@@ -227,6 +235,35 @@ try {
 			}
 			totalPay = 0;
 			pof.getLblPay().setText("0");
+			//주문완료했을 경우
+			try {
+				pu_dao.logout(psf.getLblStarttime().getText());//로그아웃 db변경
+				Properties prop = new Properties();
+				prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbclient/dao/database.properties"));
+				int  socketPort=Integer.parseInt(prop.getProperty("socketPort"));
+				String serverIp=prop.getProperty("serverIp");
+				
+				//서버에 종료를 알리기위해
+				Socket client=new Socket(serverIp,socketPort);
+				DataOutputStream dos=null;
+				
+				dos=new DataOutputStream( client.getOutputStream() );
+				dos.writeInt(ORDER);//서버로 파일명 보내기
+				
+				if(dos!=null) {dos.close();}//end if
+				if(client!=null) {client.close();}//end if
+				
+			} catch (SQLException se) {
+				JOptionPane.showMessageDialog(psf, "주문 중 문제발생");
+				se.printStackTrace();
+			} catch (NumberFormatException e1) {
+				e1.printStackTrace();
+			} catch (UnknownHostException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			
 			JOptionPane.showMessageDialog(pof, "주문이 완료되었습니다.");
 			break;
 		};

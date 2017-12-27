@@ -14,7 +14,7 @@ public class PcbStatusFrm extends JFrame {
 	
 	public PcbStatusFrm(PcbUserLoginFrm pulf) {
 		this.pulf = pulf;
-		lblSeat = new JLabel("좌석2");
+		lblSeat = new JLabel("좌석");
 		lblId = new JLabel("Alpha34");
 		JLabel textStart = new JLabel("시작시간");
 		JLabel textLeft = new JLabel("남은시간");
@@ -51,7 +51,7 @@ public class PcbStatusFrm extends JFrame {
 		btnMsg.addActionListener(pse);
 		btnEnd.addActionListener(pse);
 		addWindowListener(pse);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		setBounds(1530, 10, 350, 340);
 		setVisible(true);

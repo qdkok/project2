@@ -57,8 +57,7 @@ public class PcbSearchEvt implements ActionListener {
 	}//search
 	
 	public void addTime() {
-
-		if(id.trim().equals("")) {		//아이디 찾기를 하지 않을 경우
+		if (id==null || id.trim().equals("")) {		//아이디 찾기를 하지 않을 경우
 			JOptionPane.showMessageDialog(psf, "아이디를 먼저 검색해 주세요");
 			return;
 		}//end if

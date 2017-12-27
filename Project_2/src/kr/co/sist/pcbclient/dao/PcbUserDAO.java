@@ -23,6 +23,7 @@ import kr.co.sist.pcbclient.vo.PcbUserJoinVO;
 
 public class PcbUserDAO {
 	private static PcbUserDAO pu_dao;
+	private static int seatNumber;
 	private boolean chkFlag = false;
 	
 	public PcbUserDAO() {
@@ -42,11 +43,12 @@ public class PcbUserDAO {
 		Properties prop = new Properties();
 		
 		try {
-			prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));
+			prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbclient/dao/database.properties"));
 			
 			Class.forName(prop.getProperty("driverClass"));
 			
 			con = DriverManager.getConnection(prop.getProperty("url"), prop.getProperty("id"),prop.getProperty("pass"));
+			seatNumber=Integer.parseInt(prop.getProperty("seatsNum"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -133,13 +135,14 @@ public class PcbUserDAO {
 			con = getConn();
 			String userLogin="";
 			if(id.length()>=4) {
-				userLogin = "insert into seats(SEATS_NUM,LOGIN_TIME,LOGIN_STATUS,MEM_ID) values(SEAT_NUM(15),sysdate,'Y',?)";
+				userLogin = "insert into seats(SEATS_NUM,LOGIN_TIME,LOGIN_STATUS,MEM_ID) values(SEAT_NUM(?),sysdate,'Y',?)";
 			}else {
-				userLogin = "insert into seats(SEATS_NUM,LOGIN_TIME,LOGIN_STATUS,NOMEM_ID) values(SEAT_NUM(15),sysdate,'Y',?)";
+				userLogin = "insert into seats(SEATS_NUM,LOGIN_TIME,LOGIN_STATUS,NOMEM_ID) values(SEAT_NUM(?),sysdate,'Y',?)";
 			}//end if
 						
 			pstmt = con.prepareStatement(userLogin);
-			pstmt.setString(1, id);
+			pstmt.setInt(1, seatNumber);
+			pstmt.setString(2, id);
 			pstmt.executeUpdate();
 			
 		} finally {
@@ -214,10 +217,12 @@ public class PcbUserDAO {
 				String insertUser = "insert into orderlist(order_num, order_time, seats_num, prd_num, quantity, login_time) values(ord_num(),sysdate,?,?,?,(select LOGIN_TIME from SEATS where LOGIN_STATUS='Y' and SEATS_NUM=?))";
 				pstmt = con.prepareStatement(insertUser);
 				
-				pstmt.setString(1, lsPovo.get(i).getSeatNum());
+				String seatNum="seat_"+seatNumber;
+				
+				pstmt.setString(1, seatNum);
 				pstmt.setString(2, lsPovo.get(i).getPrdNum());
 				pstmt.setInt(3, lsPovo.get(i).getQuantity());
-				pstmt.setString(4, lsPovo.get(i).getSeatNum());
+				pstmt.setString(4, seatNum);
 				
 				pstmt.executeUpdate();
 			}
@@ -288,9 +293,7 @@ public class PcbUserDAO {
 			dbClose(null, pstmt, rs);
 			
 			String usingID = "select seats_num from seats where nomem_id=? and login_status='Y'";
-//			String noNum = "004";
 			pstmt = con.prepareStatement(usingID);
-//			pstmt.setString(1, noNum);
 			pstmt.setString(1, noMem_Id);
 			
 			rs=pstmt.executeQuery();
@@ -320,9 +323,11 @@ public class PcbUserDAO {
 				
 			//현재좌석의 사용중인 데이터의 시간을 가져온다.
 			userLogin = "select to_char(LOGIN_TIME,'yyyy-mm-dd hh:mi') time from SEATS where LOGIN_STATUS='Y' and SEATS_NUM=?";
+			
+			String seatNum="seat_"+seatNumber;
 						
 			pstmt = con.prepareStatement(userLogin);
-			pstmt.setString(1, "seat_15");
+			pstmt.setString(1, seatNum);
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
@@ -334,8 +339,6 @@ public class PcbUserDAO {
 		}
 	}
 	
-	//test단계
-	//사용종료 메서드 좌석번호를 받아 현재 좌석의 종료를 알림
 	public void logout(String startTime) throws SQLException{
 		Connection con = null;
 		PreparedStatement pstmt = null;
@@ -347,9 +350,11 @@ public class PcbUserDAO {
 				
 			userLogin = "update seats set LOGIN_STATUS='N' where seats_num=? and (select to_char(LOGIN_TIME,'yyyy-mm-dd hh:mi') from SEATS where LOGIN_STATUS='Y' and SEATS_NUM=?) = ? ";
 						
+			String seatNum="seat_"+seatNumber;
+			
 			pstmt = con.prepareStatement(userLogin);
-			pstmt.setString(1, "seat_15");
-			pstmt.setString(2, "seat_15");
+			pstmt.setString(1, seatNum);
+			pstmt.setString(2, seatNum);
 			pstmt.setString(3, startTime);
 			pstmt.executeUpdate();
 			
@@ -370,8 +375,7 @@ public class PcbUserDAO {
 		try {
 			con = getConn();
 			
-			String userLogin = 
-					"select left_time from member where mem_id=?";
+			String userLogin = "select left_time from member where mem_id=?";
 			
 			pstmt = con.prepareStatement(userLogin);
 			pstmt.setString(1, id);
@@ -396,8 +400,7 @@ public class PcbUserDAO {
 		try {
 			con = getConn();
 			
-			String userLogin = 
-					"select left_time from nomember where nomem_id=?";
+			String userLogin = "select left_time from nomember where nomem_id=?";
 			
 			pstmt = con.prepareStatement(userLogin);
 			pstmt.setString(1, id);
@@ -413,7 +416,7 @@ public class PcbUserDAO {
 		return leftTime;
 	}
 	
-	public boolean updateTime(String id, int left_time) throws SQLException{
+	public boolean updateTime(String id) throws SQLException{
 		boolean flag = false;
 		
 		Connection con = null;
@@ -422,10 +425,10 @@ public class PcbUserDAO {
 		try {
 			con = getConn();
 			
-			String updateStatus = "update member set left_time=? where mem_id=?";
+			String updateStatus = "update member set left_time=(select left_time from member where mem_id=?)-1 where mem_id=?";
 			pstmt = con.prepareStatement(updateStatus);
 			
-			pstmt.setInt(1, left_time);
+			pstmt.setString(1, id);
 			pstmt.setString(2, id);
 			
 			int cnt = pstmt.executeUpdate();
@@ -441,7 +444,7 @@ public class PcbUserDAO {
 		return flag;
 	}//updateTime
 	
-	public boolean noUpdateTime(String id, int left_time) throws SQLException{
+	public boolean noUpdateTime(String id) throws SQLException{
 		boolean flag = false;
 		
 		Connection con = null;
@@ -450,10 +453,10 @@ public class PcbUserDAO {
 		try {
 			con = getConn();
 			
-			String updateStatus = "update nomember set left_time=? where nomem_id=?";
+			String updateStatus = "update nomember set left_time=(select left_time from nomember where nomem_id=?)-1 where nomem_id=?";
 			pstmt = con.prepareStatement(updateStatus);
 			
-			pstmt.setInt(1, left_time);
+			pstmt.setString(1, id);
 			pstmt.setString(2, id);
 			
 			int cnt = pstmt.executeUpdate();
@@ -468,6 +471,5 @@ public class PcbUserDAO {
 		
 		return flag;
 	}//updateTime
-	
-	
+
 }
