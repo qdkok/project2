@@ -176,14 +176,6 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 		}//try
 	}//setStatus
 	
-	public String seatChk() { //좌석번호 뿌리기
-		return "";
-	}
-	
-	public String time() {
-		return "";
-	}
-	
 	public void endRequest() {
 		switch(JOptionPane.showConfirmDialog(psf, "사용을 종료하시겠습니까?")) {
 		case JOptionPane.OK_OPTION:

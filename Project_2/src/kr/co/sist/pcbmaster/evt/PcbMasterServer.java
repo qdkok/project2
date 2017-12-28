@@ -1,6 +1,10 @@
 package kr.co.sist.pcbmaster.evt;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,9 +58,6 @@ public class PcbMasterServer implements Runnable {
 		JOptionPane.showMessageDialog(pmmf, msg);
 	}//takeMsg
 	
-	public void takeFile() {
-		
-	}//takeFime
 	
 	public void takeUseEnd() {//사용종료
 		pmme.setSeats();
@@ -66,15 +67,34 @@ public class PcbMasterServer implements Runnable {
 		pmme.setOrdList();
 	}//takeOrder
 	
-	public void sendFile() {
+	public synchronized void sendFile(Socket client) throws IOException{
+		
+		DataInputStream dis=null;
+		DataOutputStream dos=null;
+		FileInputStream fis =null;
+		try {
+			String imgPath = System.getProperty("user.dir")+"/img/";
+
+			dis=new DataInputStream(client.getInputStream());
+			dos=new DataOutputStream(client.getOutputStream());
+			fis = new FileInputStream(imgPath+dis.readUTF());
+			 
+	        byte[] readData = new byte[512];
+	        int length = fis.read(readData);
+	        while (length != -1) {
+	          	dos.write(readData, 0, length);
+	            length = fis.read(readData);
+	        }
+	        //System.out.println(dis.readUTF()+"전송 성공");
+			
+		}finally {
+			if(dis!=null) {dis.close();}
+			if(dos!=null) {dos.close();}
+			if(fis!=null) {fis.close();}
+			
+		}
 		
 	}//sendFile 
 	
-	public void endUser(String seatNum) {
-		
-	}//endUser
 	
-	public void sendMsg(String seatNum,String msg) {
-		 
-	}//sendMsg 
 }//class

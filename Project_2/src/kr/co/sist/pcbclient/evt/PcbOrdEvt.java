@@ -5,8 +5,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
@@ -40,11 +43,30 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 	private int totalPay = 0;
 	public static final int DOUBLE_CLICK = 2;
 	private static final int ORDER=3;
+	private static final int NONEFILE=4;
+	
+	private Properties prop;
+	private int socketPort;
+	private String serverIp;
 	
 	public PcbOrdEvt(PcbOrdFrm pof,PcbStatusFrm psf) {
 		this.pof = pof;
 		this.psf = psf;
-		setListRamen();
+		
+		try {
+			prop = new Properties();
+			prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbclient/dao/database.properties"));
+			socketPort=Integer.parseInt(prop.getProperty("socketPort"));
+			serverIp=prop.getProperty("serverIp");
+			
+			setListRamen();
+			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void setListRamen() {
@@ -58,7 +80,6 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 			Object[] rowData = null;
 			
 			PcbSetMenuVO psmv = null;
-			String path="C:/dev/workspace/Project_2/src/kr/co/sist/pcbclient/img/";
 			File tempFile = null;
 			
 			for(int i=0; i< userAllMenu.size(); i++) {
@@ -71,7 +92,45 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 				tempFile = new File(psmv.getPrdImg());
 				if(!tempFile.exists()) {
 					//이미지가 없을 때 default 이미지를 띄우는 것으로 수정
-					JOptionPane.showMessageDialog(null, "이미지없음");
+					DataOutputStream dos= null;
+					DataInputStream dis = null;
+					FileOutputStream fos = null;
+					try {
+//						System.out.println(tempFile.getName());
+						String imgPath = System.getProperty("user.dir")+"/img/";
+						
+						Socket client = new Socket(serverIp,socketPort);
+						dos = new DataOutputStream( client.getOutputStream() );
+						dis = new DataInputStream(client.getInputStream());
+						
+						fos = new FileOutputStream(imgPath+tempFile.getName()); 
+						
+						dos.writeInt(NONEFILE);//주문요청
+						dos.writeUTF(tempFile.getName()); //파일명 보내기
+						
+						byte[] readData = new byte[512];
+			            int length = dis.read(readData);
+			            System.out.print("다운중 ");
+			            
+			            while (length != -1) {
+			                System.out.print(".");
+			                fos.write(readData, 0, length);
+			                length = dis.read(readData);
+			            }
+			 
+			            System.out.println(tempFile.getName()+"파일 저장 성공");
+						
+						if(dos!=null) {dos.close();}//end if
+						if(dis!=null) {dis.close();}
+						if(fos!=null) {fos.close();}
+						if(client!=null) {client.close();}//end if
+						
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
 				}
 				
 				ImageIcon img = new ImageIcon(psmv.getPrdImg());
@@ -104,7 +163,6 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 			Object[] rowData = null;
 			
 			PcbSetMenuVO psmv = null;
-			String path="C:/dev/workspace/Project_2/src/kr/co/sist/pcbmgt/img/";
 			File tempFile = null;
 			
 			for(int i=0; i< userAllMenu.size(); i++) {
@@ -118,6 +176,7 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 				if(!tempFile.exists()) {
 					//이미지가 없을 때 default 이미지를 띄우는 것으로 수정
 					JOptionPane.showMessageDialog(null, "이미지없음");
+					
 				}
 				ImageIcon img = new ImageIcon(psmv.getPrdImg());
 				Image originImg = img.getImage();
@@ -149,7 +208,6 @@ try {
 			Object[] rowData = null;
 			
 			PcbSetMenuVO psmv = null;
-			String path="C:/dev/workspace/Project_2/src/kr/co/sist/pcbmgt/img/";
 			File tempFile = null;
 			
 			for(int i=0; i< userAllMenu.size(); i++) {
@@ -216,13 +274,17 @@ try {
 			
 		if(rowCnt == 1) {
 			ordCnt = 0;
-		}
+		}//ene if
 		
 		switch(JOptionPane.showConfirmDialog(pof, jspOrder)) {
 		case JOptionPane.OK_OPTION:
 			PcbUserDAO pu_dao = PcbUserDAO.getInstance();
 			for(int i=0; i<(rowCnt+ordCnt); i++) {
 				try {
+					if(lpo.size()==0) {
+						JOptionPane.showMessageDialog(pof, "주문할 항목이 없습니다.");
+						return;
+					}//end if
 					pu_dao.userOrder(lpo);
 				} catch (NullPointerException e) {
 					JOptionPane.showMessageDialog(pof, "주문할 항목이 없습니다.");
@@ -237,25 +299,16 @@ try {
 			pof.getLblPay().setText("0");
 			//주문완료했을 경우
 			try {
-				pu_dao.logout(psf.getLblStarttime().getText());//로그아웃 db변경
-				Properties prop = new Properties();
-				prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbclient/dao/database.properties"));
-				int  socketPort=Integer.parseInt(prop.getProperty("socketPort"));
-				String serverIp=prop.getProperty("serverIp");
-				
-				//서버에 종료를 알리기위해
+		
 				Socket client=new Socket(serverIp,socketPort);
 				DataOutputStream dos=null;
 				
 				dos=new DataOutputStream( client.getOutputStream() );
-				dos.writeInt(ORDER);//서버로 파일명 보내기
+				dos.writeInt(ORDER);//주문요청
 				
 				if(dos!=null) {dos.close();}//end if
 				if(client!=null) {client.close();}//end if
 				
-			} catch (SQLException se) {
-				JOptionPane.showMessageDialog(psf, "주문 중 문제발생");
-				se.printStackTrace();
 			} catch (NumberFormatException e1) {
 				e1.printStackTrace();
 			} catch (UnknownHostException e1) {

@@ -18,6 +18,7 @@ public class ServerHelper extends Thread {
 	private final static int START=1;
 	private final static int END=2;
 	private final static int ORDER=3;
+	private final static int NONEFILE=4;
 	public ServerHelper(PcbMasterServer cs,int port) {
 		this.port=port;
 		this.cs=cs;
@@ -43,6 +44,10 @@ public class ServerHelper extends Thread {
 					break;
 				case ORDER:
 					cs.takeOrder();
+					break;
+				case NONEFILE:
+					cs.sendFile(client);
+					break;
 				}//end switch
 				
 				
