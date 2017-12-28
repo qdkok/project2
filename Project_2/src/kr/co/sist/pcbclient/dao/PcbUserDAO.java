@@ -171,23 +171,29 @@ public class PcbUserDAO {
 			if(rs.next()) {
 				if(rs.getString("pass").equals(new String(pulf.getTfUserPass().getPassword()) )) {
 					loginFlag = "Y";
-					return loginFlag;
 				}//end if
-			}//end if 아이디 체크
+			}else {
+				return loginFlag;
+			}//end else
 			
 			dbClose(null, pstmt, rs);
 			
-			String usingID = "select seats_num, login_status, mem_id from seats where mem_id=? and login_status='Y'";
+			String usingID = "select mem_id from seats where seats_num=? and login_status='Y'";
+			
+			String seatNum="seat_"+(seatNumber<10?"0"+seatNumber:seatNumber);
 			
 			pstmt = con.prepareStatement(usingID);
-			pstmt.setString(1, id);
+			pstmt.setString(1, seatNum);
 			
 			rs=pstmt.executeQuery();
 			
 			if(rs.next()) {
-				loginFlag = "L";
-				return loginFlag;
-			}
+				if(rs.getString("mem_id").equals(id)) {
+					loginFlag = "L";
+				}else {
+					loginFlag = "T";
+				}
+			}//end if
 			
 			
 		} finally {
@@ -217,7 +223,7 @@ public class PcbUserDAO {
 				String insertUser = "insert into orderlist(order_num, order_time, seats_num, prd_num, quantity, login_time) values(ord_num(),sysdate,?,?,?,(select LOGIN_TIME from SEATS where LOGIN_STATUS='Y' and SEATS_NUM=?))";
 				pstmt = con.prepareStatement(insertUser);
 				
-				String seatNum="seat_"+seatNumber;
+				String seatNum="seat_"+(seatNumber<10?"0"+seatNumber:seatNumber);
 				
 				pstmt.setString(1, seatNum);
 				pstmt.setString(2, lsPovo.get(i).getPrdNum());
@@ -292,17 +298,24 @@ public class PcbUserDAO {
 			
 			dbClose(null, pstmt, rs);
 			
-			String usingID = "select seats_num from seats where nomem_id=? and login_status='Y'";
+			String usingID = "select nomem_id from seats where seats_num=? and login_status='Y'";
+			
+			String seatNum="seat_"+(seatNumber<10?"0"+seatNumber:seatNumber);
+			
 			pstmt = con.prepareStatement(usingID);
-			pstmt.setString(1, noMem_Id);
+			pstmt.setString(1, seatNum);
 			
 			rs=pstmt.executeQuery();
 			
-			if(rs.next()) {
-				loginFlag = "L";
-				return loginFlag;
-			}
 			
+			if(rs.next()) {
+				if(rs.getString("nomem_id").equals(noMem_Id)) {
+					loginFlag = "L";
+				}else {
+					loginFlag = "T";
+				}
+			}//end if
+						
 		} finally {
 			dbClose(con, pstmt, rs);
 		}
@@ -324,7 +337,7 @@ public class PcbUserDAO {
 			//현재좌석의 사용중인 데이터의 시간을 가져온다.
 			userLogin = "select to_char(LOGIN_TIME,'yyyy-mm-dd hh:mi') time from SEATS where LOGIN_STATUS='Y' and SEATS_NUM=?";
 			
-			String seatNum="seat_"+seatNumber;
+			String seatNum="seat_"+(seatNumber<10?"0"+seatNumber:seatNumber);
 						
 			pstmt = con.prepareStatement(userLogin);
 			pstmt.setString(1, seatNum);
@@ -350,7 +363,7 @@ public class PcbUserDAO {
 				
 			userLogin = "update seats set LOGIN_STATUS='N' where seats_num=? and (select to_char(LOGIN_TIME,'yyyy-mm-dd hh:mi') from SEATS where LOGIN_STATUS='Y' and SEATS_NUM=?) = ? ";
 						
-			String seatNum="seat_"+seatNumber;
+			String seatNum="seat_"+(seatNumber<10?"0"+seatNumber:seatNumber);
 			
 			pstmt = con.prepareStatement(userLogin);
 			pstmt.setString(1, seatNum);

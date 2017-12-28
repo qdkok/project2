@@ -36,7 +36,7 @@ import kr.co.sist.pcbclient.vo.PcbSetMenuVO;
 public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeListener {
 	private PcbOrdFrm pof;
 	private PcbStatusFrm psf;
-	private DefaultTableModel dtmOrder, tempMenu;
+	private DefaultTableModel  tempMenu;
 	private int totalPay = 0;
 	public static final int DOUBLE_CLICK = 2;
 	private static final int ORDER=3;

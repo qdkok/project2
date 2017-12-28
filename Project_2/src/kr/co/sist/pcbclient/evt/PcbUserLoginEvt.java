@@ -62,6 +62,11 @@ public class PcbUserLoginEvt implements ActionListener, ItemListener {
 					return;
 				}//end if
 				
+				if(pu_dao.userLogin(pulf).equals("T")) {
+					JOptionPane.showMessageDialog(pulf, "이미 사용중인 좌석입니다.");
+					return;
+				}//end if
+				
 				if(pu_dao.userGetTime(id) == 0) {
 					JOptionPane.showMessageDialog(pulf, "가지고 계신 시간이 없습니다. 카운터에 문의하여 충전해주세요.");
 					return;
@@ -79,6 +84,12 @@ public class PcbUserLoginEvt implements ActionListener, ItemListener {
 					JOptionPane.showMessageDialog(pulf, "이미 사용중인 아이디 입니다.");
 					return;
 				}//end if
+				
+				if(pu_dao.noUserLogin(pulf).equals("T")) {
+					JOptionPane.showMessageDialog(pulf, "이미 사용중인 좌석 입니다.");
+					return;
+				}//end if
+				
 				if(pu_dao.noUserGetTime(id) == 0) {
 					JOptionPane.showMessageDialog(pulf, "가지고 계신 시간이 없습니다. 카운터에 문의하여 충전해주세요.");
 					return;
