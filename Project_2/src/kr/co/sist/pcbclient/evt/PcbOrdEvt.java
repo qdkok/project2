@@ -102,7 +102,7 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 						dos = new DataOutputStream( client.getOutputStream() );
 						dis = new DataInputStream(client.getInputStream());
 						
-						fos = new FileOutputStream(tempFile.getName()); 
+						fos = new FileOutputStream(tempFile); 
 						
 						dos.writeInt(NONEFILE);//주문요청
 						dos.writeUTF(tempFile.getName()); //파일명 보내기
@@ -183,7 +183,7 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 						dos = new DataOutputStream( client.getOutputStream() );
 						dis = new DataInputStream(client.getInputStream());
 						
-						fos = new FileOutputStream(tempFile.getName()); 
+						fos = new FileOutputStream(tempFile); 
 						
 						dos.writeInt(NONEFILE);//주문요청
 						dos.writeUTF(tempFile.getName()); //파일명 보내기
@@ -253,20 +253,17 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 				
 				tempFile = new File(System.getProperty("user.dir")+"/img/"+psmv.getPrdImg());
 				if(!tempFile.exists()) {
-					//이미지가 없을 때 default 이미지를 띄우는 것으로 수정
-					JOptionPane.showMessageDialog(null, "이미지없음");
 					
 					DataOutputStream dos= null;
 					DataInputStream dis = null;
 					FileOutputStream fos = null;
 					try {
-//						System.out.println(tempFile.getName());
 						
 						Socket client = new Socket(serverIp,socketPort);
 						dos = new DataOutputStream( client.getOutputStream() );
 						dis = new DataInputStream(client.getInputStream());
 						
-						fos = new FileOutputStream(tempFile.getName()); 
+						fos = new FileOutputStream(tempFile); 
 						
 						dos.writeInt(NONEFILE);//주문요청
 						dos.writeUTF(tempFile.getName()); //파일명 보내기

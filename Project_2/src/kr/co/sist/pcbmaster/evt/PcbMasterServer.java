@@ -85,7 +85,7 @@ public class PcbMasterServer implements Runnable {
 	          	dos.write(readData, 0, length);
 	            length = fis.read(readData);
 	        }
-	        //System.out.println(dis.readUTF()+"傈价 己傍");
+	        System.out.println("傈价 己傍");
 			
 		}finally {
 			if(dis!=null) {dis.close();}
