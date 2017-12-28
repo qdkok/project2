@@ -54,7 +54,13 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 			prop = new Properties();
 			prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));
 			socketPort=Integer.parseInt(prop.getProperty("socketPort"))+Integer.parseInt(seatNum);
-			userIp=prop.getProperty("userIp");
+			switch(Integer.parseInt(seatNum)) {
+			case 15: userIp=prop.getProperty("userIp15"); break;
+			case 16: userIp=prop.getProperty("userIp16"); break; 
+			case 17: userIp=prop.getProperty("userIp17"); break;
+			case 19: userIp=prop.getProperty("userIp19"); break;
+			}
+			
 			
 			//서버에 시작을 알리기위해
 
@@ -94,6 +100,9 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 		if(ae.getSource()==psf.getSendMsg()) { //메시지 보내기 버튼을 클릭했을 때
 			String msg=JOptionPane.showInputDialog("보낼 메시지를 입력하세요.");
 			//메시지 전달
+			if(msg==null||msg.equals("")) {
+				return;
+			}//end if
 			try {
 				System.out.println(userIp);
 				System.out.println(socketPort);

@@ -13,6 +13,7 @@ import java.net.UnknownHostException;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import kr.co.sist.pcbclient.dao.PcbUserDAO;
@@ -38,6 +39,7 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 	private int socketPort;
 	private int seatNumber;
 	private String serverIp;
+	private PcbStatusServer pss;
 	
 	public PcbStatusEvt(PcbStatusFrm psf,PcbUserLoginFrm pulf) {
 		this.psf = psf;
@@ -74,7 +76,7 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 		 setStatus();
 		 
 		 //유저서버오픈
-		 new PcbStatusServer(psf, this);
+		pss=new PcbStatusServer(psf, this);
 		
 		timeThread = new Thread(this);
 		timeThread.start(); ////////////////Thread
@@ -113,6 +115,7 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 			e1.printStackTrace();
 		}
 		timeThread.stop();
+		System.exit(JFrame.ABORT);
 		super.windowClosed(e);
 	}
 

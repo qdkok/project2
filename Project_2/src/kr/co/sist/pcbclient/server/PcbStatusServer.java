@@ -13,7 +13,7 @@ import kr.co.sist.pcbclient.evt.PcbStatusEvt;
 import kr.co.sist.pcbclient.form.PcbStatusFrm;
 
 public class PcbStatusServer implements Runnable {
-	PcbStatusFrm psf;
+	private PcbStatusFrm psf;
 	private PcbStatusEvt pse;
 	private ServerSocket ss;
 	private Socket client;
@@ -36,6 +36,7 @@ public class PcbStatusServer implements Runnable {
 		JOptionPane.showMessageDialog(psf, msg);
 	}//takeMsg
 	
+	
 	public void takeEndTime() {
 		psf.dispose();
 	}
@@ -43,6 +44,7 @@ public class PcbStatusServer implements Runnable {
 	public void takeTime() {
 		pse.setStatus();
 	}
+	
 	
 	@Override
 	public void run() {
@@ -58,6 +60,7 @@ public class PcbStatusServer implements Runnable {
 				DataInputStream dis = null;
 				dis=new DataInputStream( client.getInputStream() );
 				
+				System.out.println(psf);
 				switch (dis.readInt()) {
 				case MSG:
 					 takeMsg(dis.readUTF());
@@ -69,6 +72,8 @@ public class PcbStatusServer implements Runnable {
 					takeTime();
 					break;
 				}//switch
+				
+				if(dis!=null) {dis.close();}
 			}
 			
 		}catch (IOException e) {
@@ -76,7 +81,9 @@ public class PcbStatusServer implements Runnable {
 		}//catch
 		
 	}//run
-	
-	
+
+	public ServerSocket getSs() {
+		return ss;
+	}
 
 }
