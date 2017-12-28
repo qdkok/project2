@@ -97,7 +97,7 @@ public class PcbAddPrdEvt extends WindowAdapter implements ActionListener{
 			return;
 		}//end catch
 		
-		String img = writeFile.getPath();
+		String img = writeFile.getName();
 		String name = papf.getPrdName().getText().trim();
 		
 		//콤보박스 넘기기 위해 선언
@@ -179,7 +179,7 @@ public class PcbAddPrdEvt extends WindowAdapter implements ActionListener{
 			papf.getPrdPrice().setText(pi.getPrdPrice()+"");
 			papf.getPrdcate().setSelectedItem(pi.getPrdCate());
 			
-			writeFile = new File(pi.getPrdImg());
+			writeFile = new File(System.getProperty("user.dir")+"/img/"+pi.getPrdImg());
 			
 			ImageIcon img = new ImageIcon(writeFile.getAbsolutePath());
 			Image originImg = img.getImage();
@@ -227,20 +227,6 @@ public class PcbAddPrdEvt extends WindowAdapter implements ActionListener{
 			byte[] readData = new byte[512];
 			int temp=0;
 			
-//			//파일에서 읽어 들이는 스트림.
-//			fis=new FileInputStream(readFile);
-//			//목적지에 파일을 생성하는 스트림	
-//			fos=new FileOutputStream(writeFile);
-//			//큰 이미지 기록
-//			while( (temp=fis.read(readData)) != -1 ) {
-//			//파일에서 읽어들인 내용을 파일로 보낸다.
-//				fos.write(readData, 0, temp);
-//			}//end while
-//			fos.flush();
-//			if(fis!=null) {fis.close();}//end if
-//			if(fos!=null) {fos.close();}//end if
-//			readData = null;
-				
 			fis=new FileInputStream(readFile);
 		    fos=new FileOutputStream(writeFile);
 		    readData=new byte[512];

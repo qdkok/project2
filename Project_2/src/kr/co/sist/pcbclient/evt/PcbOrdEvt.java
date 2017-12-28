@@ -55,7 +55,7 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 		
 		try {
 			prop = new Properties();
-			prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbclient/dao/database.properties"));
+			prop.load(new FileReader(System.getProperty("user.dir")+"/Project_2/src/kr/co/sist/pcbclient/dao/database.properties"));
 			socketPort=Integer.parseInt(prop.getProperty("socketPort"));
 			serverIp=prop.getProperty("serverIp");
 			
@@ -89,7 +89,7 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 				
 				rowData[0] = psmv.getPrdNum(); //상품명
 				
-				tempFile = new File(psmv.getPrdImg());
+				tempFile = new File(System.getProperty("user.dir")+"/img/"+psmv.getPrdImg());
 				if(!tempFile.exists()) {
 					//이미지가 없을 때 default 이미지를 띄우는 것으로 수정
 					DataOutputStream dos= null;
@@ -97,13 +97,12 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 					FileOutputStream fos = null;
 					try {
 //						System.out.println(tempFile.getName());
-						String imgPath = System.getProperty("user.dir")+"/img/";
 						
 						Socket client = new Socket(serverIp,socketPort);
 						dos = new DataOutputStream( client.getOutputStream() );
 						dis = new DataInputStream(client.getInputStream());
 						
-						fos = new FileOutputStream(imgPath+tempFile.getName()); 
+						fos = new FileOutputStream(tempFile.getName()); 
 						
 						dos.writeInt(NONEFILE);//주문요청
 						dos.writeUTF(tempFile.getName()); //파일명 보내기
@@ -133,7 +132,7 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 					
 				}
 				
-				ImageIcon img = new ImageIcon(psmv.getPrdImg());
+				ImageIcon img = new ImageIcon(System.getProperty("user.dir")+"/img/"+psmv.getPrdImg());
 				Image originImg = img.getImage();
 				Image changeImg = originImg.getScaledInstance(200, 200,  java.awt.Image.SCALE_SMOOTH);
 				ImageIcon finalImg = new ImageIcon(changeImg);
@@ -172,13 +171,48 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 				
 				rowData[0] = psmv.getPrdNum(); //상품명
 				
-				tempFile = new File(psmv.getPrdImg());
+				tempFile = new File(System.getProperty("user.dir")+"/img/"+psmv.getPrdImg());
 				if(!tempFile.exists()) {
-					//이미지가 없을 때 default 이미지를 띄우는 것으로 수정
-					JOptionPane.showMessageDialog(null, "이미지없음");
+					DataOutputStream dos= null;
+					DataInputStream dis = null;
+					FileOutputStream fos = null;
+					try {
+//						System.out.println(tempFile.getName());
+						
+						Socket client = new Socket(serverIp,socketPort);
+						dos = new DataOutputStream( client.getOutputStream() );
+						dis = new DataInputStream(client.getInputStream());
+						
+						fos = new FileOutputStream(tempFile.getName()); 
+						
+						dos.writeInt(NONEFILE);//주문요청
+						dos.writeUTF(tempFile.getName()); //파일명 보내기
+						
+						byte[] readData = new byte[512];
+			            int length = dis.read(readData);
+			            System.out.print("다운중 ");
+			            
+			            while (length != -1) {
+			                System.out.print(".");
+			                fos.write(readData, 0, length);
+			                length = dis.read(readData);
+			            }
+			 
+			            System.out.println(tempFile.getName()+"파일 저장 성공");
+						
+						if(dos!=null) {dos.close();}//end if
+						if(dis!=null) {dis.close();}
+						if(fos!=null) {fos.close();}
+						if(client!=null) {client.close();}//end if
+						
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 					
 				}
-				ImageIcon img = new ImageIcon(psmv.getPrdImg());
+				ImageIcon img = new ImageIcon(System.getProperty("user.dir")+"/img/"+psmv.getPrdImg());
 				Image originImg = img.getImage();
 				Image changeImg = originImg.getScaledInstance(200, 200,  java.awt.Image.SCALE_SMOOTH);
 				ImageIcon finalImg = new ImageIcon(changeImg);
@@ -200,7 +234,7 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 		DefaultTableModel tempMenu = pof.getDtmDrink();
 		PcbUserDAO pu_dao = PcbUserDAO.getInstance();
 		
-try {
+		try {
 			
 			List<PcbSetMenuVO> userAllMenu = pu_dao.userAllMenu("음료");
 			tempMenu.setRowCount(0);
@@ -217,13 +251,53 @@ try {
 				
 				rowData[0] = psmv.getPrdNum(); //상품명
 				
-				tempFile = new File(psmv.getPrdImg());
+				tempFile = new File(System.getProperty("user.dir")+"/img/"+psmv.getPrdImg());
 				if(!tempFile.exists()) {
 					//이미지가 없을 때 default 이미지를 띄우는 것으로 수정
 					JOptionPane.showMessageDialog(null, "이미지없음");
+					
+					DataOutputStream dos= null;
+					DataInputStream dis = null;
+					FileOutputStream fos = null;
+					try {
+//						System.out.println(tempFile.getName());
+						
+						Socket client = new Socket(serverIp,socketPort);
+						dos = new DataOutputStream( client.getOutputStream() );
+						dis = new DataInputStream(client.getInputStream());
+						
+						fos = new FileOutputStream(tempFile.getName()); 
+						
+						dos.writeInt(NONEFILE);//주문요청
+						dos.writeUTF(tempFile.getName()); //파일명 보내기
+						
+						byte[] readData = new byte[512];
+			            int length = dis.read(readData);
+			            System.out.print("다운중 ");
+			            
+			            while (length != -1) {
+			                System.out.print(".");
+			                fos.write(readData, 0, length);
+			                length = dis.read(readData);
+			            }
+			 
+			            System.out.println(tempFile.getName()+"파일 저장 성공");
+						
+						if(dos!=null) {dos.close();}//end if
+						if(dis!=null) {dis.close();}
+						if(fos!=null) {fos.close();}
+						if(client!=null) {client.close();}//end if
+						
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+					
 				}
 				
-				ImageIcon img = new ImageIcon(psmv.getPrdImg());
+				ImageIcon img = new ImageIcon(System.getProperty("user.dir")+"/img/"+psmv.getPrdImg());
 				Image originImg = img.getImage();
 				Image changeImg = originImg.getScaledInstance(200, 200,  java.awt.Image.SCALE_SMOOTH);
 				ImageIcon finalImg = new ImageIcon(changeImg);

@@ -47,7 +47,7 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 		
 		try {
 			prop = new Properties();
-			prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbclient/dao/database.properties"));
+			prop.load(new FileReader(System.getProperty("user.dir")+"/Project_2/src/kr/co/sist/pcbclient/dao/database.properties"));
 			socketPort=Integer.parseInt(prop.getProperty("socketPort"));
 			seatNumber=Integer.parseInt(prop.getProperty("seatsNum"));
 			serverIp=prop.getProperty("serverIp");

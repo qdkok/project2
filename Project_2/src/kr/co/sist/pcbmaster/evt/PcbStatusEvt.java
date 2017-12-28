@@ -52,7 +52,7 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 		
 		try {
 			prop = new Properties();
-			prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));
+			prop.load(new FileReader(System.getProperty("user.dir")+"/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));
 			socketPort=Integer.parseInt(prop.getProperty("socketPort"))+Integer.parseInt(seatNum);
 			switch(Integer.parseInt(seatNum)) {
 			case 15: userIp=prop.getProperty("userIp15"); break;

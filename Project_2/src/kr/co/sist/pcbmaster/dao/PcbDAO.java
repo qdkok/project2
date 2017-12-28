@@ -42,8 +42,7 @@ public class PcbDAO {
 		
 		Properties prop = new Properties();
 		try {
-			prop.load(new FileReader("C:/dev/git/project2/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));//kdy
-//			prop.load(new FileReader("C:/dev/git/project2_sub/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));
+			prop.load(new FileReader(System.getProperty("user.dir")+"/Project_2/src/kr/co/sist/pcbmaster/dao/database.properties"));//kdy
 		
 			Class.forName(prop.getProperty("driverClass"));
 	
