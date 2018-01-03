@@ -1,5 +1,7 @@
 package kr.co.sist.pcbmaster.frm;
 
+import java.awt.Color;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -23,10 +25,16 @@ public class PcbSearchFrm extends JDialog {
 		this.pmme=pmme;
 		
 		btnSearch= new JButton("검색");
+		btnSearch.setBackground(new Color(0x282827));
+		btnSearch.setForeground(Color.white);
 		btnAddTime = new JButton("시간추가");
+		btnAddTime.setBackground(new Color(0x282827));
+		btnAddTime.setForeground(Color.white);
 		searchId = new JTextField();
 		jlName = new JLabel("◎이름 : ");
 		jlTime = new JLabel("◎남은 시간 : ");
+		jlName.setForeground(Color.WHITE);
+		jlTime.setForeground(Color.WHITE);
 		
 		addTime=new DefaultComboBoxModel<>();
 		String[]time= new String[] {"1:00","2:00","3:00","4:00","5:00"};
@@ -59,7 +67,9 @@ public class PcbSearchFrm extends JDialog {
 		btnSearch.addActionListener(pse);
 		btnAddTime.addActionListener(pse);
 		
+		getContentPane().setBackground(new Color(0x6C6C6C));
 		setVisible(true);
+		setResizable(false);
 		setBounds(500, 300, 390, 150);
 	}//PcbSearchFrm
 

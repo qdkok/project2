@@ -393,32 +393,33 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 		};
 	}//order
 	
-	public void addBasket() {
-		
-	}
-	
 	public void delBasket() {
 		JTable tempTbl = pof.getJtMenuList();
 		int removePay = (int) tempTbl.getValueAt(tempTbl.getSelectedRow(), 3);
 		switch(JOptionPane.showConfirmDialog(pof, "장바구니에서 해당 품목을 삭제하시겠습니까?")) {
-		case JOptionPane.OK_OPTION:
-			totalPay -= removePay;
-			pof.getLblPay().setText(String.valueOf(totalPay));
-			pof.getDtmOrder().removeRow(tempTbl.getSelectedRow());
-		}
-	}
+			case JOptionPane.OK_OPTION:
+				totalPay -= removePay;
+				pof.getLblPay().setText(String.valueOf(totalPay));
+				pof.getDtmOrder().removeRow(tempTbl.getSelectedRow());
+		}//end switch
+	}//delBasket
 	
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource()==pof.getBtnOrder()) {
-			order();
-		}
+			if(pof.getDtmOrder().getRowCount() != 0) {
+				order();
+			}else {
+				JOptionPane.showMessageDialog(pof, "주문목록에 상품을 추가한 후 주문해주세요.");
+				return;
+			}
+		}//getBtnOrder
 		
 		if(ae.getSource()==pof.getBtnCancle()) {
 			pof.dispose();
-		}
+		}//getBtnCancle
 		
-	}
+	}//actionPerformed
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
@@ -437,22 +438,23 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 					tempTbl = pof.getJtMenuList_r();
 					String menuNum = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 0));
 					String menu = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 2));
+					String ordQuantity = JOptionPane.showInputDialog("주문하실 상품의 수량을 입력해주세요.");
 					try {
-						int quantity = Integer.parseInt(JOptionPane.showInputDialog("주문하실 수량을 입력해주세요."));
-						int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
-						
-						
-						
-						rowData[0] = menuNum;
-						rowData[1] = menu;
-						rowData[2] = quantity;
-						rowData[3] = quantity*price;
-						
-						totalPay += (quantity*price);
-						pof.getLblPay().setText(String.valueOf(totalPay));
-						
-						pof.getDtmOrder().addRow(rowData);
-						break;
+						if(ordQuantity != null) {
+							int quantity = Integer.parseInt(ordQuantity);
+							int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
+							
+							rowData[0] = menuNum;
+							rowData[1] = menu;
+							rowData[2] = quantity;
+							rowData[3] = quantity*price;
+							
+							totalPay += (quantity*price);
+							pof.getLblPay().setText(String.valueOf(totalPay));
+							
+							pof.getDtmOrder().addRow(rowData);
+							break;
+						}
 					}catch(NumberFormatException nfe) {
 						JOptionPane.showMessageDialog(pof, "숫자만 입력가능합니다.");
 					}
@@ -464,23 +466,23 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 					tempTbl = pof.getJtMenuList_s();
 					String menuNum = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 0));
 					String menu = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 2));
+					String ordQuantity = JOptionPane.showInputDialog("주문하실 상품의 수량을 입력해주세요.");
 					try {
-						int quantity = Integer.parseInt(JOptionPane.showInputDialog("주문하실 수량을 입력해주세요."));
-						int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
-						
-						
-	
-						
-						rowData[0] = menuNum;
-						rowData[1] = menu;
-						rowData[2] = quantity;
-						rowData[3] = quantity*price;
-						
-						totalPay += (quantity*price);
-						pof.getLblPay().setText(String.valueOf(totalPay));
-						
-						pof.getDtmOrder().addRow(rowData);
-						break;
+						if(ordQuantity != null) {
+							int quantity = Integer.parseInt(ordQuantity);
+							int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
+							
+							rowData[0] = menuNum;
+							rowData[1] = menu;
+							rowData[2] = quantity;
+							rowData[3] = quantity*price;
+							
+							totalPay += (quantity*price);
+							pof.getLblPay().setText(String.valueOf(totalPay));
+							
+							pof.getDtmOrder().addRow(rowData);
+							break;
+						}
 					}catch(NumberFormatException nfe) {
 						JOptionPane.showMessageDialog(pof, "숫자만 입력가능합니다.");
 					}
@@ -492,27 +494,29 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 					tempTbl = pof.getJtMenuList_d();
 					String menuNum = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 0));
 					String menu = (String)(tempTbl.getValueAt(tempTbl.getSelectedRow(), 2));
+					String ordQuantity = JOptionPane.showInputDialog("주문하실 상품의 수량을 입력해주세요.");
 					try {
-						int quantity = Integer.parseInt(JOptionPane.showInputDialog("주문하실 수량을 입력해주세요."));
-						int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
-						
-						
-						rowData[0] = menuNum;
-						rowData[1] = menu;
-						rowData[2] = quantity;
-						rowData[3] = quantity*price;
-						
-						totalPay += (quantity*price);
-						pof.getLblPay().setText(String.valueOf(totalPay));
-						
-						pof.getDtmOrder().addRow(rowData);
-						break;
+						if(ordQuantity != null) {
+							int quantity = Integer.parseInt(ordQuantity);
+							int price =  Integer.parseInt(String.valueOf(tempTbl.getValueAt(tempTbl.getSelectedRow(), 3)));
+							
+							rowData[0] = menuNum;
+							rowData[1] = menu;
+							rowData[2] = quantity;
+							rowData[3] = quantity*price;
+							
+							totalPay += (quantity*price);
+							pof.getLblPay().setText(String.valueOf(totalPay));
+							
+							pof.getDtmOrder().addRow(rowData);
+							break;
+						}//end if
 					}catch(NumberFormatException nfe) {
 						JOptionPane.showMessageDialog(pof, "숫자만 입력가능합니다.");
-					}
-				}
+					}//end try
+				}//end switch
 				break;
-			}
+			}//end switch
 		}//if getSource
 		
 		if(me.getSource() == pof.getJtMenuList()) {

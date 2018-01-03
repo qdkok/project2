@@ -1,5 +1,9 @@
 package kr.co.sist.pcbclient.form;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -20,16 +24,38 @@ public class PcbOrdFrm extends JDialog{
 	private JLabel lblPrice, lblPay;
 	private JTabbedPane jtMenubar;
 	private JTable jtMenuList, jtMenuList_r , jtMenuList_s, jtMenuList_d;
+	private ImageIcon mainBackImage;
 	
 	public PcbOrdFrm(PcbStatusFrm psf) {
 		this.psf = psf;
 		
+		//버튼에 이미지 넣기
 		btnOrder = new JButton("주문하기");
-		btnCancle = new JButton("닫기");
+		btnOrder.setForeground(Color.white);
+		btnOrder.setBackground(new Color(0x104F5E) );
+		btnCancle = new JButton("취소");
+		btnCancle.setForeground(Color.white);
+		btnCancle.setBackground(new Color(0x104F5E) );
+		
 		lblPrice = new JLabel("총 금액 : ");
 		lblPay = new JLabel("0");
+		lblPrice.setForeground(Color.white);
+		lblPay.setForeground(Color.white);
 		
 		setLayout(null);
+		
+		//배경 넣기
+		mainBackImage = new ImageIcon(System.getProperty("user.dir")+"/common/"+"order_background.jpg");
+		JPanel background = new JPanel() {
+			public void paintComponent(Graphics g) {
+				g.drawImage(mainBackImage.getImage(), 0,0,null);
+				setOpaque(false);
+				super.paintComponent(g);
+			}
+		};
+		
+		background.setBounds(0, 0, 910, 750);
+		background.setLayout(null);
 		
 		////////////////////////////Ramen MenuItem form////////////////////////////
 		
@@ -153,7 +179,8 @@ public class PcbOrdFrm extends JDialog{
 		JScrollPane jspMenuList = new JScrollPane(jtMenuList);		
 		////////////////////////////OrderList Table form////////////////////////////
 		
-		JLabel OrderInfoMsg = new JLabel("해당 Swing 사용 설명 메시지");
+		JLabel OrderInfoMsg = new JLabel("<html>주문 : 원하는 상품 더블클릭 ☞<br>　　　수량 입력 후 주문목록에 추가 후 주문!<br>삭제 : 주문목록에서 메뉴 더블클릭 ☞ 삭제!</html>");
+		OrderInfoMsg.setForeground(Color.WHITE);
 		OrderInfoMsg.setBounds(585, 420, 280, 100);
 		
 		////////////////////////////Order Button////////////////////////////
@@ -166,6 +193,7 @@ public class PcbOrdFrm extends JDialog{
 		jtMenubar.setBounds(0, 0, 890, 430);
 		jspMenuList.setBorder(new TitledBorder("주문목록"));
 		jspMenuList.setBounds(5, 435, 555, 190);
+		jspMenuList.getViewport().setBackground(new Color(0x676768));
 		
 		
 		//column 이동 막기
@@ -181,6 +209,7 @@ public class PcbOrdFrm extends JDialog{
 		add(lblPrice);
 		add(lblPay);
 		add(OrderInfoMsg);
+		add(background);///
 		
 		PcbOrdEvt poe = new PcbOrdEvt(this,psf);
 		jtMenuList.addMouseListener(poe);

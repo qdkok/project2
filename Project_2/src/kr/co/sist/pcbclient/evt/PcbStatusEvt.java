@@ -70,7 +70,6 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 			e1.printStackTrace();
 		}//catch
 		
-		
 		 id = pulf.getTfUserId().getText();
 		 //현재상태뿌리기
 		 setStatus();

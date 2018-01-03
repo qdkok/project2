@@ -17,13 +17,21 @@ public class PcbJoinEvt implements ActionListener {
 		this.pjf = pjf;
 	}
 	
-	public void chkId() {
+	public boolean chkId() {
+		boolean clickFlag = false;
 		try {
 			PcbUserDAO pu_dao = PcbUserDAO.getInstance();
-			pu_dao.userIdChk(pjf);
+			if(pu_dao.userIdChk(pjf)) {
+				JOptionPane.showMessageDialog(pjf, "사용가능한 ID입니다.");
+				clickFlag = true;
+			}else {
+				JOptionPane.showMessageDialog(pjf, "중복된 ID가 존재합니다.");
+				clickFlag = false;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return clickFlag;
 	}
 	
 	public void join() {
@@ -39,8 +47,7 @@ public class PcbJoinEvt implements ActionListener {
 		try {
 			//회원가입 유효성 검사
 			if(pu_dao.userIdChk(pjf)) {
-				if(pass.equals(passChk) && !pass.equals("")
-						&& !name.equals("") && pjf.getTfUserPh().getText().length() == 8 
+				if("".equals(id) && pass.equals(passChk) && !pass.equals("") && !name.equals("") && pjf.getTfUserPh().getText().length() == 8 
 						&& !pjf.getTfUserEm_addr().getText().equals("")) {
 							
 					PcbUserJoinVO pujvo = new PcbUserJoinVO(id, pass, name, phone, email);
@@ -50,9 +57,9 @@ public class PcbJoinEvt implements ActionListener {
 					pjf.dispose();
 				}else {
 					JOptionPane.showMessageDialog(pjf, "입력값을 다시 확인해주세요.");
+					pjf.getTfUserPass().setText("");
+					pjf.getTfUserPassChk().setText("");
 				}
-			}else {
-				JOptionPane.showMessageDialog(pjf, "ID 중복확인을 해주세요.");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -63,7 +70,11 @@ public class PcbJoinEvt implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource() == pjf.getBtnJoin()) {
-			join();
+			if(chkId()) {
+				join();
+			}else {
+				JOptionPane.showMessageDialog(pjf, "ID중복확인을 해주세요.");
+			}
 		}
 		
 		if(ae.getSource() == pjf.getBtnCancle()) {

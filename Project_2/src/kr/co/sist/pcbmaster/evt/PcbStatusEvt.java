@@ -42,13 +42,11 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 	private final static int ADDTIME=2;
 	
 	public PcbStatusEvt(PcbStatusFrm psf,PcbMasterMainFrm pmmf, PcbMasterMainEvt pmme,String seatNum,PcbMasterServer pms) {
-		super();
 		this.psf = psf;
 		this.pmme = pmme;
 		flagnum= Integer.parseInt(seatNum);//비회원 파악 플래그
 		this.seatNum="seat_"+ (seatNum.length()==1?"0"+seatNum:seatNum);
 		setUser(this.seatNum);
-		
 		
 		try {
 			prop = new Properties();
@@ -60,7 +58,6 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 			case 17: userIp=prop.getProperty("userIp17"); break;
 			case 19: userIp=prop.getProperty("userIp19"); break;
 			}
-			
 			
 			//서버에 시작을 알리기위해
 
@@ -92,7 +89,6 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 			if(client!=null) {client.close();}//end if
 			
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}//end if
@@ -139,7 +135,6 @@ public class PcbStatusEvt extends WindowAdapter implements Runnable,ActionListen
 						if(client!=null) {client.close();}//end if
 						
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					

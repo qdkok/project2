@@ -15,7 +15,6 @@ import kr.co.sist.pcbclient.form.PcbUserLoginFrm;
 
 public class PcbUserLoginEvt implements ActionListener, ItemListener {
 	private PcbUserLoginFrm pulf;
-	private int seatPri;
 	
 	public PcbUserLoginEvt(PcbUserLoginFrm pulf) {
 		this.pulf = pulf;
@@ -26,7 +25,7 @@ public class PcbUserLoginEvt implements ActionListener, ItemListener {
 		if(ae.getSource() == pulf.getBtnJoin()) {
 			join();
 		}
-		if(ae.getSource() == pulf.getBtnLogin()) {
+		if(ae.getSource() == pulf.getBtnLogin() || ae.getSource() == pulf.getTfUserPass()) {
 			try {
 				login();
 			} catch (SQLException e) {
@@ -35,10 +34,6 @@ public class PcbUserLoginEvt implements ActionListener, ItemListener {
 		}
 		
 	}//actionPerformed
-	
-	public void checkLogin() { //로그인체크
-		
-	}//checkLogin
 	
 	public void join() {
 		new PcbJoinFrm(pulf);
@@ -106,10 +101,12 @@ public class PcbUserLoginEvt implements ActionListener, ItemListener {
 	@Override
 	public void itemStateChanged(ItemEvent ie) {
 		if(ie.getSource() == pulf.getCbNoMem()) {
+			pulf.getLblID().setText("비회원번호");
 			pulf.getLblPW().setVisible(false);
 			pulf.getTfUserPass().setVisible(false);
 		}
 		if(ie.getSource() == pulf.getCbMem()) {
+			pulf.getLblID().setText("아이디");
 			pulf.getLblPW().setVisible(true);
 			pulf.getTfUserPass().setVisible(true);
 		}

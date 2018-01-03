@@ -4,6 +4,8 @@ import java.awt.FileDialog;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -30,7 +32,6 @@ public class PcbAddPrdEvt extends WindowAdapter implements ActionListener{
 	private PcbMasterMainEvt pmme;
 	private boolean flag,okflag,updateFlag; //추가or수정 확인 플래그
 	private String prdNum;
-	
 	
 	@Override
 	public void windowClosing(WindowEvent e) {
@@ -207,7 +208,7 @@ public class PcbAddPrdEvt extends WindowAdapter implements ActionListener{
 			String[] arrFile=file.split("[.]");
 			String ext = arrFile[arrFile.length-1];
 			if(!"jpg,gif,png,JPG,GIF,PNG".contains(ext)) {
-				JOptionPane.showMessageDialog(papf, "이미지형식이 적절하지 않습니다.");
+				JOptionPane.showMessageDialog(papf, "이미지 형식이 적절하지 않습니다.");
 				return;
 			}//end if
 			
@@ -218,7 +219,7 @@ public class PcbAddPrdEvt extends WindowAdapter implements ActionListener{
 			writeFile = new File(runDir+"/img/"+file);
 			
 			if(writeFile.exists()) {//파일이 복사되는 폴더에 같은 이름의 파일이 존재한다면 파일명을 변경하도록 설정한다
-				JOptionPane.showMessageDialog(papf, "동일이름의 이미지가 존재합니다. \n 다른 이름으로 변경하여 이미지를 등록해주세요.");
+				JOptionPane.showMessageDialog(papf, "동일 이름의 이미지가 존재합니다. \n 다른 이름으로 변경하여 이미지를 등록해주세요.");
 				return;
 			}//end if
 			
@@ -285,6 +286,6 @@ public class PcbAddPrdEvt extends WindowAdapter implements ActionListener{
 			papf.dispose();
 		}//end if
 		
+		
 	}//actionPerformed
- 	
 }//class

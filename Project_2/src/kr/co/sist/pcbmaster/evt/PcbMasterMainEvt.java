@@ -145,7 +145,7 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 						String ordNum = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 0);
 						String ordStatus = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 5);
 						if(ordStatus.equals("Y")) {
-							JOptionPane.showMessageDialog(pmmf, "이미처리된 주문입니다.");
+							JOptionPane.showMessageDialog(pmmf, "이미 처리된 주문입니다.");
 							return;
 						}//end if
 						ordClear(ordNum);
@@ -286,11 +286,6 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 			e.printStackTrace();
 		}
 	}// setPrdList
-
-	public void openServer() {
-
-	}// openServer
-
 
 	public void delPrd() {
 	PcbDAO p_dao = PcbDAO.getInstance();

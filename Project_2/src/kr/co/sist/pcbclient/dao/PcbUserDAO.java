@@ -86,14 +86,10 @@ public class PcbUserDAO {
 			
 			if(!inputId.equals("")) {
 				if(rs.next()) {
-					JOptionPane.showMessageDialog(null, "이미 존재하는 아이디입니다.");
-					chkFlag = false;
+					chkFlag = false; //중복된 아이디가 존재함.
 				}else {
-					JOptionPane.showMessageDialog(null, inputId+"는 사용가능한 ID입니다.");
-					chkFlag = true;
+					chkFlag = true; //입력한 아이디 사용가능.
 				}
-			}else {
-				JOptionPane.showMessageDialog(null, "아이디를 입력해주세요.");
 			}
 			
 		}finally {

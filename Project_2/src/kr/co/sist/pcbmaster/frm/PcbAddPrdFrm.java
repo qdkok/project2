@@ -1,6 +1,8 @@
 package kr.co.sist.pcbmaster.frm;
 
 
+import java.awt.Color;
+
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,13 +35,23 @@ public class PcbAddPrdFrm extends JFrame {
      lblMenuImg = new JLabel("");// 선택된 이미지 보여지는
      lblMenuImg.setIcon(img);
       
-      prdAddImg=new JButton("이미지등록");
-      prdOk= new JButton("확인");
-      prdCancle=new JButton("취소");
+     prdAddImg=new JButton("이미지등록");
+     prdAddImg.setBackground(new Color(0x282827));
+     prdAddImg.setForeground(Color.white);
+     prdOk= new JButton("확인");
+     prdOk.setBackground(new Color(0x282827));
+     prdOk.setForeground(Color.white);
+     prdCancle=new JButton("취소");
+     prdCancle.setBackground(new Color(0x282827));
+     prdCancle.setForeground(Color.white);
       
       JLabel lblcategory = new JLabel("◎카테고리 설정");
       JLabel lblname = new JLabel("◎상품명");
       JLabel lblprice = new JLabel("◎가격");
+      
+      lblcategory.setForeground(Color.WHITE);
+      lblname.setForeground(Color.WHITE);
+      lblprice.setForeground(Color.WHITE);
       
       prdcate=new DefaultComboBoxModel<>();
       
@@ -84,9 +96,10 @@ public class PcbAddPrdFrm extends JFrame {
       
       lblMenuImg.setBorder(new TitledBorder("이미지"));
       
-      setLayout(null);
+      getContentPane().setBackground(new Color(0x6C6C6C));
       
       setVisible(true);
+      setResizable(false);
       setBounds(50,50,500,750);
       
       PcbAddPrdEvt pape = new PcbAddPrdEvt(this,this.pmmf,pmme,flag);
@@ -94,7 +107,6 @@ public class PcbAddPrdFrm extends JFrame {
       prdAddImg.addActionListener(pape);
       prdCancle.addActionListener(pape);
       addWindowListener(pape);
-      
       
    }//PcbPrdFrm
 

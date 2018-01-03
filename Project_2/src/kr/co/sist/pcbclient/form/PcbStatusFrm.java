@@ -1,8 +1,14 @@
 package kr.co.sist.pcbclient.form;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import kr.co.sist.pcbclient.evt.PcbStatusEvt;
 
@@ -11,6 +17,7 @@ public class PcbStatusFrm extends JFrame {
 	private PcbUserLoginFrm pulf;
 	private JButton btnOrd, btnMsg, btnEnd;
 	private JLabel lblSeat, lblId, lblLefttime, lblStarttime;
+	private ImageIcon mainBackImage;
 	
 	public PcbStatusFrm(PcbUserLoginFrm pulf) {
 		this.pulf = pulf;
@@ -20,16 +27,49 @@ public class PcbStatusFrm extends JFrame {
 		JLabel textLeft = new JLabel("남은시간");
 		lblLefttime = new JLabel("");
 		lblStarttime = new JLabel("");
+		
+		lblSeat.setFont(new Font("돋움", Font.BOLD, 30));
+		lblId.setFont(new Font("돋움", Font.BOLD, 20));
+		textStart.setFont(new Font("돋움", Font.BOLD, 15));
+		textLeft.setFont(new Font("돋움", Font.BOLD, 15));
+		
+		//버튼이미지 & 롤오버 이미지
 		btnOrd = new JButton("음식주문");
+		btnOrd.setForeground(Color.white);
+		btnOrd.setBackground(new Color(0x104F5E) );
 		btnMsg = new JButton("메시지송신");
+		btnMsg.setForeground(Color.white);
+		btnMsg.setBackground(new Color(0x104F5E) );
 		btnEnd = new JButton("사용종료");
+		btnEnd.setForeground(Color.white);
+		btnEnd.setBackground(new Color(0x104F5E) );
 		
 		setLayout(null);
 		
-		lblSeat.setBounds(90, 40, 50, 30);
-		lblId.setBounds(200, 40, 50, 30);
-		textStart.setBounds(90, 130, 100, 20);
-		textLeft.setBounds(90, 180, 100, 20);
+		mainBackImage = new ImageIcon(System.getProperty("user.dir")+"/common/"+"user_login_background.jpg");
+		JPanel background = new JPanel() {
+			public void paintComponent(Graphics g) {
+				g.drawImage(mainBackImage.getImage(), 0,0,null);
+				setOpaque(false);
+				super.paintComponent(g);
+			}
+		};
+		
+		//글자색 전부 흰색으로
+		lblSeat.setForeground(Color.WHITE);
+		lblId.setForeground(Color.WHITE);
+		textStart.setForeground(Color.WHITE);
+		textLeft.setForeground(Color.WHITE);
+		lblStarttime.setForeground(Color.WHITE);
+		lblLefttime.setForeground(Color.WHITE);
+		
+		
+		background.setLayout(null);
+		background.setBounds(0, 0, 400, 380);
+		lblSeat.setBounds(50, 40, 160, 30);
+		lblId.setBounds(200, 40, 100, 30);
+		textStart.setBounds(80, 130, 100, 20);
+		textLeft.setBounds(80, 180, 100, 20);
 		lblStarttime.setBounds(200, 130, 100, 20);
 		lblLefttime.setBounds(200, 180, 100, 20);
 		btnOrd.setBounds(10, 250, 100, 40);
@@ -45,6 +85,7 @@ public class PcbStatusFrm extends JFrame {
 		add(btnOrd);
 		add(btnMsg);
 		add(btnEnd);
+		add(background);
 		
 		PcbStatusEvt pse = new PcbStatusEvt(this,pulf);
 		btnOrd.addActionListener(pse);

@@ -7,9 +7,5 @@ public class PcbMasterRun {
 	public static void main(String[] args) {
 		new PcbMasterLoginFrm();
 		//test¿‘¥œ¥Ÿ
-		
 	}//main
-	
 }//class
-
-

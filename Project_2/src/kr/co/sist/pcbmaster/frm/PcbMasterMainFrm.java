@@ -1,5 +1,6 @@
 package kr.co.sist.pcbmaster.frm;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 
 import javax.swing.DefaultComboBoxModel;
@@ -30,7 +31,12 @@ public class PcbMasterMainFrm extends JFrame {
 		JPanel jpProducts = new JPanel();
 		JPanel jpOrder = new JPanel();
 		
+		jpSeats.setBackground(new Color(0xF5461));
+		jpProducts.setBackground(new Color(0xF5461));
+		
 		btnAddTime = new JButton("사용자 시간 추가");
+		btnAddTime.setBackground(new Color(0x282827));
+		btnAddTime.setForeground(Color.WHITE);
 		
 		//----------------------------------상품관리-----------------------------
 		 String[] productColumn= {"상품번호","분류","상품명","단가","최종수정시간"};
@@ -65,8 +71,9 @@ public class PcbMasterMainFrm extends JFrame {
 	      btnSeats=new JButton[20];
 	      for(int i=0 ; i<20 ; i++) {
 	    	 btnSeats[i] = new JButton("좌석"+(i+1));
+	    	 btnSeats[i].setForeground(Color.white);
 	         jpSeats.add(btnSeats[i]);
-	         
+	         btnSeats[i].setBackground(new Color(0x282827));
 	         btnSeats[i].setBounds(x, y, 150, 150);
 	         x+=160;
 	         switch (i) {
@@ -75,8 +82,6 @@ public class PcbMasterMainFrm extends JFrame {
 	         }//end switch
 	      }//end for
 	      //------------------------ 좌석관리----------------------------
-	      
-	     
 	      
 	      JScrollPane jsp= new JScrollPane(tPrdList);
 	      jpSeats.setLayout(null);
@@ -87,21 +92,27 @@ public class PcbMasterMainFrm extends JFrame {
 	      jpProducts.setLayout(null);
 	      JPanel inJp1=new JPanel();
 	      jpProducts.add(inJp1);
-	      inJp1.setBounds(0, 0, 1290, 500);
+	      inJp1.setBounds(0, 0, 1300, 500);
 	      inJp1.setLayout(new GridLayout(1, 1));
 	      inJp1.add(jsp);
 	      
 	      JPanel inJp2=new JPanel();
 	      jpProducts.add(inJp2);
-	      inJp2.setBounds(10,600,1200,250);
+	      inJp2.setBounds(0,500,1300,250);
 	      inJp2.setLayout(null);
 	      
 	      btnPrdAdd = new JButton("상품추가");
-	      btnPrdAdd.setBounds(700, 10, 100, 50);
+	      btnPrdAdd.setBounds(860, 80, 100, 50);
+	      btnPrdAdd.setBackground(new Color(0x282827));
+	      btnPrdAdd.setForeground(Color.white);
 	      btnPrdDelete = new JButton("상품삭제");
-	      btnPrdDelete.setBounds(820, 10, 100, 50);
+	      btnPrdDelete.setBounds(980, 80, 100, 50);
+	      btnPrdDelete.setBackground(new Color(0x282827));
+	      btnPrdDelete.setForeground(Color.white);
 	      btnPrdUpdate = new JButton("상품수정");
-	      btnPrdUpdate.setBounds(940, 10, 100, 50);
+	      btnPrdUpdate.setBounds(1100, 80, 100, 50);
+	      btnPrdUpdate.setBackground(new Color(0x282827));
+	      btnPrdUpdate.setForeground(Color.white);
 	      
 	      inJp2.add(btnPrdAdd);
 	      inJp2.add(btnPrdDelete);
@@ -111,20 +122,25 @@ public class PcbMasterMainFrm extends JFrame {
 	      JPanel inJp3 = new JPanel();
 	      jpOrder.add(inJp3);
 	      JScrollPane jsp2 = new JScrollPane(tOrdList);
-	      inJp3.add(jsp2);
-	      inJp3.setBounds(0, 0, 1290,500);
+	      inJp3.setBounds(0, 0, 1300,500);
 	      inJp3.setLayout(new GridLayout(1, 1));
 	      inJp3.add(jsp2);
-	      
+	      inJp3.setBackground(new Color(0xF5461));
 	      JPanel inJp4 = new JPanel();
 	      jpOrder.add(inJp4);
-	      inJp4.setBounds(10,600,1200,250);
+	      inJp4.setBounds(0,500,1300,250);
 	      inJp4.setLayout(null);
+	      inJp4.setBackground(new Color(0xF5461));
 	      
+	      inJp2.setBackground(new Color(0xF5461));
+	      jsp.getViewport().setBackground(new Color(0x0C353D));
+	      jsp2.getViewport().setBackground(new Color(0x0C353D));
 	      
 	      btnOrdCancle = new JButton("주문취소");
+	      btnOrdCancle.setBackground(new Color(0x282827));
+	      btnOrdCancle.setForeground(Color.white);
 	      inJp4.add(btnOrdCancle);
-	      btnOrdCancle.setBounds(940, 10, 100, 50);
+	      btnOrdCancle.setBounds(1100, 80, 100, 50);
 	      
 	      tPrdList.setRowHeight(50);
 	      tOrdList.setRowHeight(50);
@@ -139,6 +155,7 @@ public class PcbMasterMainFrm extends JFrame {
 	      tPrdList.getColumnModel().getColumn(0).setPreferredWidth(100);
 	      
 	      setBounds(300,80,1310,750);
+	      setResizable(false);
 	      setVisible(true);
 	      
 	      PcbMasterMainEvt pmme = new PcbMasterMainEvt(this);
