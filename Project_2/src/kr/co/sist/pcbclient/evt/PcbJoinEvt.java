@@ -43,7 +43,7 @@ public class PcbJoinEvt implements ActionListener {
 		try {
 			//회원가입 유효성 검사
 			if(pu_dao.userIdChk(pjf)) {
-				if("".equals(id) && pass.equals(passChk) && !pass.equals("") && !name.equals("") && pjf.getTfUserPh().getText().length() == 8 
+				if(!id.equals("") && pass.equals(passChk) && !pass.equals("") && !name.equals("") && pjf.getTfUserPh().getText().length() == 8 
 						&& !pjf.getTfUserEm_addr().getText().equals("")) {
 							
 					PcbUserJoinVO pujvo = new PcbUserJoinVO(id, pass, name, phone, email);
