@@ -141,7 +141,7 @@ public class PcbStatusEvt extends WindowAdapter implements ActionListener, Runna
 				}else if( pulf.getCbNoMem().getState()) {
 						pu_dao.noUpdateTime(id); //비회원 시간 업데이트
 				}//end if else
-                 
+                 psf.getLblSeat().setText("좌석");
                  setStatus();
             } catch (InterruptedException e) {
             	JOptionPane.showMessageDialog(null, "에러발생");

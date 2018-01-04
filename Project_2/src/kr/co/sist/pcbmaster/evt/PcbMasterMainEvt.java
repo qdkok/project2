@@ -144,10 +144,12 @@ public class PcbMasterMainEvt extends MouseAdapter implements Runnable, ActionLi
 						JTable jtTemp = pmmf.gettOrdList();
 						String ordNum = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 0);
 						String ordStatus = (String) jtTemp.getValueAt(jtTemp.getSelectedRow(), 5);
+						
 						if(ordStatus.equals("Y")) {
 							JOptionPane.showMessageDialog(pmmf, "이미 처리된 주문입니다.");
 							return;
 						}//end if
+						
 						ordClear(ordNum);
 					}
 				}//switch

@@ -350,13 +350,15 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 		switch(JOptionPane.showConfirmDialog(pof, jspOrder)) {
 		case JOptionPane.OK_OPTION:
 			PcbUserDAO pu_dao = PcbUserDAO.getInstance();
-			for(int i=0; i<(rowCnt+ordCnt); i++) {
 				try {
-					if(lpo.size()==0) {
-						JOptionPane.showMessageDialog(pof, "주문할 항목이 없습니다.");
-						return;
-					}//end if
 					pu_dao.userOrder(lpo);
+					for(int i=0; i<(rowCnt+ordCnt); i++) {
+						if(lpo.size()==0) {
+							JOptionPane.showMessageDialog(pof, "주문할 항목이 없습니다.");
+							return;
+						}//end if
+						pof.getDtmOrder().removeRow(0);
+					}
 				} catch (NullPointerException e) {
 					JOptionPane.showMessageDialog(pof, "주문할 항목이 없습니다.");
 					e.printStackTrace();
@@ -364,8 +366,6 @@ public class PcbOrdEvt extends MouseAdapter implements ActionListener,ChangeList
 					JOptionPane.showMessageDialog(pof, "주문 도중 문제가 발생했습니다.");
 					e.printStackTrace();
 				}
-				pof.getDtmOrder().removeRow(0);
-			}
 			totalPay = 0;
 			pof.getLblPay().setText("0");
 			//주문완료했을 경우
