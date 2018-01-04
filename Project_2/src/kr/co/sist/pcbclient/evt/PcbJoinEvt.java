@@ -17,21 +17,17 @@ public class PcbJoinEvt implements ActionListener {
 		this.pjf = pjf;
 	}
 	
-	public boolean chkId() {
-		boolean clickFlag = false;
+	public void chkId() {
 		try {
 			PcbUserDAO pu_dao = PcbUserDAO.getInstance();
 			if(pu_dao.userIdChk(pjf)) {
 				JOptionPane.showMessageDialog(pjf, "사용가능한 ID입니다.");
-				clickFlag = true;
 			}else {
 				JOptionPane.showMessageDialog(pjf, "중복된 ID가 존재합니다.");
-				clickFlag = false;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return clickFlag;
 	}
 	
 	public void join() {
@@ -70,11 +66,7 @@ public class PcbJoinEvt implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if(ae.getSource() == pjf.getBtnJoin()) {
-			if(chkId()) {
 				join();
-			}else {
-				JOptionPane.showMessageDialog(pjf, "ID중복확인을 해주세요.");
-			}
 		}
 		
 		if(ae.getSource() == pjf.getBtnCancle()) {
